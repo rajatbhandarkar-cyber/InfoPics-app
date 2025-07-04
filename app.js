@@ -80,13 +80,17 @@ app.use((req,res,next) => {
     next();
 });
 
-app.get('/posts/about', (req, res) => {
-  res.render('posts/about');
+app.get("/", (req, res) => {
+  res.redirect("/posts");
 });
 
 app.use("/posts",postRouter);
 app.use("/posts/:id/reviews",reviewRouter);
 app.use("/",userRouter);
+
+app.all("/:path(*)",(req,res,next) => {
+    next(new ExpressError(404,"page not found"));
+});
 
 app.use((err, req, res, next) => {
     const { statusCode = 500, message = "Something went wrong" } = err;
