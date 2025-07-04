@@ -1,0 +1,55 @@
+<% layout("/layouts/boilerplate") %>
+<div class="row mt-3">
+   <div class="col-8 offset-2">
+      <h3>Create a new Post</h3>
+      <form method="POST" action = "/posts" novalidate class="needs-validation" enctype="multipart/form-data">
+         <div class="mb-3">
+            <label for="image" class="form-label">Upload Post Image</label>
+            <input 
+            name="post[image]" 
+            type="file"
+            class="form-control"
+            />
+            required
+            <div class="valid-feedback">Picture looks good!</div>
+        </div>
+         <div class="mb-3">
+            <label for="location" class="form-label">Location</label>
+            <input 
+            name="post[location]" 
+            placeholder="Jaipur,Rajasthan" 
+            type="text"
+            class="form-control"
+            required
+            />
+            <div class="invalid-feedback">Please enter the location name!</div>
+        </div>
+        <div class="mb-3">
+            <label for="country" class="form-label">Country</label>
+            <input 
+            name="post[country]" 
+            placeholder="India"
+            type="text"
+            class="form-control"
+            required
+            />
+             <!-- <div class="valid-feedback">Country looks good!</div> -->
+             <div class="invalid-feedback">Please enter the country name!</div>
+        </div>
+       
+        <div class="mb-3">
+            <label for="description" class="form-label">Experiance / Story</label>
+            <textarea 
+            name="post[description]" 
+            placeholder="document your thoughts" 
+            type="text"
+            class="form-control"
+            required
+            ></textarea>
+            <div class="invalid-feedback">Please share your Experiance / Story!</div>
+        </div>
+       <button class="btn btn-dark">Add</button>
+       <br/><br/>
+      </form>
+   </div>
+</div>    

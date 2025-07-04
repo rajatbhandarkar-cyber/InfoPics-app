@@ -1,0 +1,111 @@
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+html,body{
+  overflow-x: hidden;
+}
+
+.container {
+  flex: 1;
+  max-width: 1200px;
+  margin:0 auto;
+}
+
+.navbar {
+  height: 5rem;
+  background-color: white;
+  margin-bottom:0.2rem;
+}
+
+.fa-circle-info {
+  font-size: 2rem;
+}
+
+.nav-link {
+  color: #222222 !important;
+}
+
+.f-info-links a {
+  text-decoration: none;
+  color: #222222;
+}
+
+.f-info-links a:hover {
+  text-decoration: underline;
+}
+
+.f-info-links, .f-info-socials, .f-info-brand {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.f-info-socials i {
+  font-size: 1.2rem;
+  margin-right: 1rem;
+}
+
+.f-info {
+  text-align: center;
+  display: flex;
+  background-color: #ebebeb;
+  height: 8rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: space-evenly;
+}
+
+.grid {
+  margin: 0 auto;
+}
+
+.grid-item {
+    width: 340px;
+    margin-bottom: 16px;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    padding:1rem;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}  
+
+.grid-item:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.card-img-top {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+
+.btns {
+  display: flex;
+}
+
+.signup-page-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  padding: 2rem 1rem;
+}

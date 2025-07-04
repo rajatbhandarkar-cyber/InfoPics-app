@@ -1,0 +1,28 @@
+<% layout('/layouts/boilerplate') %>
+
+<div class="grid">
+  <% for (let post of allPosts) { %>
+    <div class="grid-item post-card">
+      <a href="/posts/<%= post._id %>" class="card-link">
+        <img src="<%= post.image.url %>" class="card-img-top" alt="post_image">
+        <div class="card-body">
+          <p><b><%= post.location %></b><br /><%= post.description %></p>
+        </div>
+      </a>
+    </div>
+  <% } %>
+</div>
+
+<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+<script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+<script>
+  var grid = document.querySelector('.grid');
+  imagesLoaded(grid, function() {
+    new Masonry(grid, {
+      itemSelector: '.grid-item',
+      columnWidth: 340,
+      gutter: 16,
+      fitWidth: true
+    });
+  });
+</script>

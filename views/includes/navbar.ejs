@@ -1,0 +1,60 @@
+<style>
+  .search-btn{
+    background-color: black;
+    color:#fff;
+    border-radius: 25px;
+    padding: 0 1rem 0 1rem;
+  }
+  .search-btn:hover{
+    background-color: black;
+    color:#fff;
+  }
+  .search-btn i {
+    display: inline;
+    margin-right: 0.5rem;
+}
+  
+  .search-inp{
+    border-radius: 25px;
+    padding:0.5rem 3rem 0.5rem 3rem;
+    font-size:1rem;
+  }
+ 
+</style>
+<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/posts"><i class="fa-solid fa-circle-info"></i></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-link" href="/posts">InfoPics</a>
+        <a class="nav-link" href="/posts/about">about</a>
+      </div>
+      <div class="navbar-nav ms-auto">
+         <form class="d-flex" role="search" action="/posts/search" method="GET">
+           <input name="q"class="form-control me-2 search-inp" type="search" placeholder="Search Locations"/>
+          <button class="btn search-btn" type="submit">
+            <i class="fa-solid fa-magnifying-glass"></i>Search
+          </button>
+         </form>
+      </div>
+       <div class="navbar-nav ms-auto">
+        <form class="d-flex" role="search">
+          <button class="btn search-btn" type="submit" href="/posts/new">
+            <a href="/posts/new" class="text-white text-decoration-none rouded-pill px-3 py-2 ">Share Experiance</a>
+          </button>
+           <!-- <a href="/posts/new" class="btn search-btn text-decoration-none">Create a post</a> -->
+        </form>
+        <% if(!currUser) { %>
+        <a class="nav-link ms-1"  href="/signup"><b>Sign up</b></a>
+        <a class="nav-link" href="/login"><b>Log in</b></a>
+        <% } %>
+         <% if(currUser) { %>
+        <a class="nav-link ms-1" href="/logout"><b>Log out</b></a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</nav>

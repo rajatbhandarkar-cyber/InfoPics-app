@@ -1,0 +1,43 @@
+<% layout("/layouts/boilerplate") %>
+
+<main class="flex-grow-1 d-flex align-items-center justify-content-center">
+  <div class="row w-100" style="max-width: 700px;">
+    <h1 class="text-center">SignUp on InfoPics</h1>
+    <div class="col-12">
+     <form action ="/signup" method="POST" class="needs-validation" novalidate>
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input 
+            name="username"
+            id="username"
+            type="text"
+            class="form-control"
+            required
+            />
+            <div class="valid-feedback">Looks good!</div>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input 
+            name="email"
+            id="email"
+            type="email"
+            class="form-control"
+            required
+            />
+        </div>
+         <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input 
+            name="password"
+            id="password"
+            type="password"
+            class="form-control"
+            required
+            />
+        </div>
+        <button class="btn btn-success">SignUp</button>
+     </form>
+    </div>
+</div>
+</main>
