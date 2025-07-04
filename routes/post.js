@@ -27,6 +27,10 @@ router.get("/new",isLoggedIn,postController.renderNewForm);
 //search Route
 router.get("/search", wrapAsync(postController.searchPosts));
 
+router.get("/about", (req, res) => {
+    res.render("posts/about");
+});
+
 router
  .route("/:id")
  .get(wrapAsync(postController.showPost))
