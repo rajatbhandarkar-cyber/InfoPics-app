@@ -84,7 +84,7 @@ app.get("/", (req, res) => {
   res.redirect("/posts");
 });
 
-router.get("/about", (req, res) => {
+app.get("/about", (req, res) => {
     res.render("posts/about");
 });
 
