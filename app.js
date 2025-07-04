@@ -80,6 +80,10 @@ app.use((req,res,next) => {
     next();
 });
 
+app.get("/test",(req,res) =>{
+    res.send("server is working");
+});
+
 app.get("/", (req, res) => {
   res.redirect("/posts");
 });
