@@ -1,11 +1,19 @@
 body {
-  display: flex;
+  display: block;
   flex-direction: column;
   min-height: 100vh;
 }
 
 html,body{
+  height:100%;
+  margin:0;
   overflow-x: hidden;
+}
+
+.page-wrapper{
+  display:flex;
+  flex-direction: column;
+  min-height:100vh;
 }
 
 .container {
@@ -47,6 +55,7 @@ html,body{
 .f-info-socials i {
   font-size: 1.2rem;
   margin-right: 1rem;
+  color:#222222;
 }
 
 .f-info {
@@ -107,5 +116,45 @@ html,body{
 }
 
 main {
-  padding: 2rem 1rem;
+  flex:1;
+  padding: 0.5rem 0.5rem 2rem 1rem;
+}
+
+.search-img {
+  position: absolute;
+  left: 12px;
+  top:50%;
+  transform:translateY(-50%);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.search-inp {
+  padding-left: 56px;
+  border-radius: 25px;
+}
+
+.read-more {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.8);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-decoration: none !important;
+  transition: color 0.2s ease;
+  opacity:0.8;
+  border-radius: 6px;
+  padding:4px 8px;
+}
+
+.read-more:hover {
+  color: rgba(0, 0, 0, 1);
+  background: #f0f0f0; /* soft bluish background */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* subtle shadow */
+  text-decoration: underline;
 }
