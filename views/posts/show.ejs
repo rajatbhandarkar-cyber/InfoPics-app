@@ -23,8 +23,9 @@
       <div class="btns mb-1">
          <a href="/posts/<%= post._id %>/edit" class="btn btn-dark col-1 offset-1 edit-btn">Edit</a>
          <form method="POST" action="/posts/<%= post._id %>?_method=DELETE">
-             <button class="btn btn-dark offset-4">Delete</button>
+             <button class="btn btn-danger offset-4">Delete</button>
          </form>
+         <a href="/posts" class="btn btn-dark ms-5">Back</a>
       </div>
     <% } %>
       
