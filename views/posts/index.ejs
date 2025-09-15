@@ -16,8 +16,8 @@
           <p>
             <b><%= post.location %></b><br />
 
-            <% if (post.description.length > 450) { %>
-              <span class="short-text"><%= post.description.substring(0, 450) %>...</span>
+            <% if (post.description.length > 500) { %>
+              <span class="short-text"><%= post.description.substring(0, 500) %>...</span>
               <span class="full-text" style="display:none;"><%= post.description %></span>
               <span class="read-more">Read more</span>
             <% } else { %>
