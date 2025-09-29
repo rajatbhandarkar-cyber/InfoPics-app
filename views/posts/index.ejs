@@ -12,19 +12,28 @@
         <a href="/posts/<%= post._id %>" class="card-link">
           <img src="<%= post.image.url %>" class="card-img-top" alt="post_image">
         </a>
-        <div class="card-body">
-          <p>
-            <b><%= post.location %></b><br />
 
-            <% if (post.description.length > 500) { %>
-              <span class="short-text"><%= post.description.substring(0, 500) %>...</span>
-              <span class="full-text" style="display:none;"><%= post.description %></span>
-              <span class="read-more">Read more</span>
-            <% } else { %>
-              <%= post.description %>
-            <% } %>
-          </p>
+        <div class="card-body">
+          <div class="post-content">
+            <p>
+              <b><%= post.location %></b><br />
+                <% if (post.description.length > 500) { %>
+                 <span class="short-text"><%= post.description.substring(0, 500) %>...</span>
+                 <span class="full-text" style="display:none;"><%= post.description %></span>
+                 <span class="read-more">Read more</span>
+                <% } else { %>
+                   <%= post.description %>
+              <% } %>
+            </p>
+          </div>
+
+          <div class="share-container">
+            <div class="share-btn" data-url="https://infopics.in/posts/<%= post._id %>" data-title="Check out <%= post.location %> on InfoPics">
+              <i class="fas fa-share-alt"></i>
+            </div>
+          </div>
         </div>
+
       </div>
     <% } %>
   <% } %>

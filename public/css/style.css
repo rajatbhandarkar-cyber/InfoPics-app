@@ -74,6 +74,7 @@ html,body{
 }
 
 .grid-item {
+    position:relative;
     width: 340px;
     margin-bottom: 16px;
     background: #fff;
@@ -96,7 +97,11 @@ html,body{
 }
 
 .card-body {
-    padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100%;
+  padding-bottom: 0.5rem;
 }
 
 .card-link {
@@ -119,6 +124,13 @@ html,body{
 main {
   flex:1;
   padding: 0.5rem 0.5rem 2rem 1rem;
+}
+
+.care-footer{
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top:1rem;
 }
 
 .search-img {
@@ -158,4 +170,35 @@ main {
   background: #f0f0f0; /* soft bluish background */
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* subtle shadow */
   text-decoration: underline;
+}
+
+.share-container {
+  margin-top:0;   /* pushes share button to bottom */
+  display: flex;
+  justify-content: flex-end; /* align to right */
+}
+
+
+.share-btn i {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  opacity: 0.8;
+  transition: all 0.2s ease;
+  margin-top:0;
+}
+
+.share-btn i:hover {
+  cursor: pointer;
+  color: rgba(0,0,0,1);
+  background: #f0f0f0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2); /* optional */
+  opacity:1;
+}
+
+.full-text{
+  display: none;
 }
