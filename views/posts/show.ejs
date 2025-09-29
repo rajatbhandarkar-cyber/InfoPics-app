@@ -28,6 +28,31 @@
          <a href="/posts" class="btn btn-dark ms-5">Back</a>
       </div>
     <% } %>
+
+    <!-- Share Section -->
+    <div class="offset-1 mt-4 mb-4">
+      <hr />
+      <h5>Share this post:</h5>
+      <div class="d-flex flex-wrap gap-2 mt-2">
+        <a class="btn btn-sm btn-primary" target="_blank"
+          href="https://www.facebook.com/sharer/sharer.php?u=https://infopics.in/posts/<%= post._id %>">
+          <i class="fab fa-facebook-f me-1"></i> Facebook
+        </a>
+        <a class="btn btn-sm btn-info text-white" target="_blank"
+          href="https://twitter.com/intent/tweet?url=https://infopics.in/posts/<%= post._id %>&text=<%= encodeURIComponent(post.title) %>">
+          <i class="fab fa-twitter me-1"></i> Twitter
+        </a>
+        <a class="btn btn-sm btn-success" target="_blank"
+          href="https://wa.me/?text=https://infopics.in/posts/<%= post._id %>">
+          <i class="fab fa-whatsapp me-1"></i> WhatsApp
+        </a>
+        <a class="btn btn-sm btn-secondary" target="_blank"
+          href="https://www.linkedin.com/sharing/share-offsite/?url=https://infopics.in/posts/<%= post._id %>">
+          <i class="fab fa-linkedin-in me-1"></i> LinkedIn
+        </a>
+      </div>
+    </div>
+    <!-- End Share Section -->
       
       <div class="offset-1 mb-3">
          <hr/>

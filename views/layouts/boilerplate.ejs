@@ -4,6 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>InfoPics</title>
+
+     <!-- Open Graph / Facebook / WhatsApp / LinkedIn / Instagram -->
+     <meta property="og:title" content="<%= typeof post !== 'undefined' ? post.title : 'InfoPics - Your Travel Companion' %>" />
+     <meta property="og:description" content="<%= typeof post !== 'undefined' ? post.description.substring(0,150) : 'Share your journeys, experiences, and memories with InfoPics.' %>" />
+     <meta property="og:image" content="<%= typeof post !== 'undefined' ? post.image.url : 'https://infopics.in/default-image.jpg' %>" />
+     <meta property="og:url" content="<%= typeof post !== 'undefined' ? 'https://infopics.in/posts/' + post._id : 'https://infopics.in' %>" />
+     <meta property="og:type" content="article" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="<%= typeof post !== 'undefined' ? post.title : 'InfoPics - Your Travel Companion' %>" />
+    <meta name="twitter:description" content="<%= typeof post !== 'undefined' ? post.description.substring(0,150) : 'Share your journeys, experiences, and memories with InfoPics.' %>" />
+    <meta name="twitter:image" content="<%= typeof post !== 'undefined' ? post.image.url : 'https://infopics.in/default-image.jpg' %>" />
+
     <link rel="stylesheet" href="/css/style.css">     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" 
           rel="stylesheet" 
