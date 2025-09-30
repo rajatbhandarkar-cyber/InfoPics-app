@@ -207,9 +207,9 @@ main {
 .about-btn {
   background-color: black;
   color: white;
-  padding: 8px 20px;        /* small button size */
+  padding: 9px 20px;        /* small button size */
   border: none;
-  border-radius: 20px;      /* round corners */
+  border-radius: 24px;      /* round corners */
   font-size: 16px;
   cursor: pointer;
   text-decoration: none;
