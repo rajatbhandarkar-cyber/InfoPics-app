@@ -202,3 +202,26 @@ main {
   display: none;
 
 }
+
+
+.about-btn {
+  background-color: black;
+  color: white;
+  padding: 6px 18px;        /* small button size */
+  border: none;
+  border-radius: 20px;      /* round corners */
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  align-self: flex-start;   /* keeps it aligned left inside flexbox */
+}
+
+.about-btn:hover {
+  background-color: #333;
+}
+
+
+.about-btn{
+  float:left;
+}
