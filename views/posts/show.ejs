@@ -1,85 +1,97 @@
 <% layout("/layouts/boilerplate") %>
-<div class="row">
-    <div class="col-7 offset-2 mt-3">
-        <div class="col-7 offset-1">
-           <h3>Post Details</h3>
-        </div>
-      <div class="card offset-1 listing-card" >
+
+<div class="container mt-4">
+
+  <!-- Post Header -->
+  <div class="row mb-3">
+    <div class="col-md-8 offset-md-2">
+      <h3>Post Details</h3>
+    </div>
+  </div>
+
+  <!-- Post Card -->
+  <div class="row mb-3">
+    <div class="col-md-8 offset-md-2">
+      <div class="card listing-card">
         <img src="<%= post.image.url %>" class="card-img-top" alt="post_image">
         <div class="card-body">
           <p class="card-text"><%= post.description %></p>
           <p class="card-text">Owned by <i><%= post.owner.username %></i></p>
+          <p class="card-text">
+            <b><%= post.location %></b><br />
+            <%= post.country %>
+          </p>
         </div>
-      </div>  
-      <div class="card-body col-6 offset-1 ">
-        <p class="card-text">
-           <b><%= post.location %></b><br/>
-            <%= post.country %><br/>
-        </p>
       </div>
-      <br/>
+    </div>
+  </div>
 
-      <% if( currUser && post.owner._id.equals(currUser._id)) { %>
-      <div class="btns mb-1">
-         <a href="/posts/<%= post._id %>/edit" class="btn btn-dark col-1 offset-1 edit-btn">Edit</a>
-         <form method="POST" action="/posts/<%= post._id %>?_method=DELETE">
-             <button class="btn btn-danger offset-4">Delete</button>
-         </form>
-         <a href="/posts" class="btn btn-dark ms-5">Back</a>
+  <!-- Action Buttons -->
+  <% if(currUser && post.owner._id.equals(currUser._id)) { %>
+  <div class="row mb-4">
+    <div class="col-md-8 offset-md-2">
+      <div class="d-flex gap-2">
+        <a href="/posts/<%= post._id %>/edit" class="btn btn-dark">Edit</a>
+        <form method="POST" action="/posts/<%= post._id %>?_method=DELETE">
+          <button class="btn btn-danger">Delete</button>
+        </form>
+        <a href="/posts" class="btn btn-secondary">Back</a>
       </div>
-    <% } %>
+    </div>
+  </div>
+  <% } %>
 
-    <!-- Share Section -->
-    <div class="offset-1 mt-4 mb-4">
+  <!-- Share Section -->
+  <div class="row mb-4">
+    <div class="col-md-8 offset-md-2">
       <hr />
-      <h5>Share this post:</h5>
-      <div class="d-flex flex-wrap gap-2 mt-2">
-        <a class="btn btn-sm btn-primary" target="_blank"
+      <h5>Share your post:</h5>
+      <div class="d-flex flex-wrap gap-3 mt-3 ">
+        <a class="btn btn-sm btn-dark" target="_blank"
           href="https://www.facebook.com/sharer/sharer.php?u=https://infopics.in/posts/<%= post._id %>">
           <i class="fab fa-facebook-f me-1"></i> Facebook
         </a>
-        <a class="btn btn-sm btn-info text-white" target="_blank"
+        <a class="btn btn-sm btn-dark text-white" target="_blank"
           href="https://twitter.com/intent/tweet?url=https://infopics.in/posts/<%= post._id %>&text=<%= encodeURIComponent(post.title) %>">
           <i class="fab fa-twitter me-1"></i> Twitter
         </a>
-        <a class="btn btn-sm btn-success" target="_blank"
+        <a class="btn btn-sm btn-dark" target="_blank"
           href="https://wa.me/?text=https://infopics.in/posts/<%= post._id %>">
           <i class="fab fa-whatsapp me-1"></i> WhatsApp
         </a>
-        <a class="btn btn-sm btn-secondary" target="_blank"
+        <a class="btn btn-sm btn-dark" target="_blank"
           href="https://www.linkedin.com/sharing/share-offsite/?url=https://infopics.in/posts/<%= post._id %>">
           <i class="fab fa-linkedin-in me-1"></i> LinkedIn
         </a>
       </div>
     </div>
-    <!-- End Share Section -->
-      
-      <div class="offset-1 mb-3">
-         <hr/>
-          <% if(currUser) { %>
+  </div>
+
+  <!-- Review Section -->
+  <div class="row mb-4">
+    <div class="col-md-8 offset-md-2">
+      <hr />
+      <% if(currUser) { %>
         <h4>Leave a Review</h4> 
-        <form action="/posts/<%= post.id %>/reviews" method="POST" novalidate class="needs-validation">
-          <!-- <div class="mb-3 mt-3">
+        <form action="/posts/<%= post.id %>/reviews" method="POST" novalidate class="needs-validation mb-4">
+          <div class="mb-3 mt-3">
             <label for="rating" class="form-label">Rating</label>
-            <input type="range" min="1" max="5" id="rating" name ="review[rating]" class="form-range"/>
-          </div>  -->
-           <div class="mb-3 mt-3">
-             <label for="rating" class="form-label">Rating</label>
-          <fieldset class="starability-slot">
-            <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
-            <input type="radio" id="first-rate1" name="review[rating]" value="1" />
-            <label for="first-rate1" title="Terrible">1 star</label>
-            <input type="radio" id="first-rate2" name="review[rating]" value="2" />
-            <label for="first-rate2" title="Not good">2 stars</label>
-            <input type="radio" id="first-rate3" name="review[rating]" value="3" />
-            <label for="first-rate3" title="Average">3 stars</label>
-            <input type="radio" id="first-rate4" name="review[rating]" value="4" />
-            <label for="first-rate4" title="Very good">4 stars</label>
-            <input type="radio" id="first-rate5" name="review[rating]" value="5" />
-            <label for="first-rate5" title="Amazing">5 stars</label>
-          </fieldset>
+            <fieldset class="starability-slot">
+              <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+              <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+              <label for="first-rate1" title="Terrible">1 star</label>
+              <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+              <label for="first-rate2" title="Not good">2 stars</label>
+              <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+              <label for="first-rate3" title="Average">3 stars</label>
+              <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+              <label for="first-rate4" title="Very good">4 stars</label>
+              <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+              <label for="first-rate5" title="Amazing">5 stars</label>
+            </fieldset>
           </div>
-          <div class="mb-3" mt-3>
+
+          <div class="mb-3">
             <label for="comments" class="form-label">Comments</label>
             <textarea 
               name="review[comment]" 
@@ -91,25 +103,29 @@
             ></textarea>
             <div class="invalid-feedback">Please add some comments for review</div>
           </div>
-          <button class=" btn btn-outline-dark mb-1">Submit</button>
+
+          <button class="btn btn-outline-dark">Submit</button>
         </form>
-        <% } %>
-   
-        <p><b>All Reviews</b></p>
-        <div class="row">
-         <% for(review of post.reviews) { %>
-          <div class="card col-5 ms-3 mb-3">
-            <div class="card-body">
-               <h5 class="card-title">@<%= review.author.username %></h5>
-               <p class="starability-result card-text" data-rating="<%= review.rating %>"></p>
-               <p class="card-text"><%= review.comment %></p>
+      <% } %>
+
+      <h5><b>All Reviews</b></h5>
+      <div class="row">
+        <% for(review of post.reviews) { %>
+          <div class="col-md-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h6 class="card-title">@<%= review.author.username %></h6>
+                <p class="starability-result card-text" data-rating="<%= review.rating %>"></p>
+                <p class="card-text"><%= review.comment %></p>
+              </div>
+              <form method="POST" action="/posts/<%= post._id %>/reviews/<%= review._id %>?_method=DELETE" class="p-2">
+                <button class="btn btn-sm btn-dark">Delete</button> 
+              </form>
             </div>
-            <form class="mb-3 " method="POST" action="/posts/<%= post._id %>/reviews/<%= review._id %>?_method=DELETE">
-             <button class="btn btn-sm btn-dark ms-3">Delete</button> 
-            </form>
           </div>
-         <% } %>
-        </div>
-      </div>      
+        <% } %>
+      </div>
     </div>
+  </div>
+
 </div>
