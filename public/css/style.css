@@ -207,10 +207,10 @@ main {
 .about-btn {
   background-color: black;
   color: white;
-  padding: 6px 18px;        /* small button size */
+  padding: 8px 20px;        /* small button size */
   border: none;
   border-radius: 20px;      /* round corners */
-  font-size: 14px;
+  font-size: 16px;
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
