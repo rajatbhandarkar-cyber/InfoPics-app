@@ -27,19 +27,19 @@
   </div>
 
   <!-- Action Buttons -->
-  <% if(currUser && post.owner._id.equals(currUser._id)) { %>
   <div class="row mb-4">
-    <div class="col-md-8 offset-md-2">
-      <div class="d-flex gap-2">
+   <div class="col-md-8 offset-md-2">
+    <div class="d-flex gap-2">
+      <% if(currUser && post.owner._id.equals(currUser._id)) { %>
         <a href="/posts/<%= post._id %>/edit" class="btn btn-dark">Edit</a>
         <form method="POST" action="/posts/<%= post._id %>?_method=DELETE">
           <button class="btn btn-danger">Delete</button>
         </form>
-        <a href="/posts" class="btn btn-secondary">Back</a>
-      </div>
+      <% } %>
+      <a href="/posts" class="btn btn-secondary">Back</a>
     </div>
+   </div>
   </div>
-  <% } %>
 
   <!-- Share Section -->
   <div class="row mb-4">
