@@ -27,13 +27,33 @@
             </p>
           </div>
 
-          <div class="share-container">
-            <div class="share-btn" data-url="https://infopics.in/posts/<%= post._id %>" data-title="Check out <%= post.location %> on InfoPics">
-              <i class="fas fa-share-alt"></i>
+          <!-- Wrap share-container in a right-aligned flex box -->
+          <div style="width: 100%; display: flex; justify-content: flex-end;">
+            <div class="share-container d-flex align-items-center mt-3">
+              <!-- Like Icon -->
+              <div class="like-btn" title="Like this post">
+                 <i class="fas fa-heart"></i>
+              </div>
+
+              <!-- Comment Icon with Badge -->
+              <div class="comment-btn position-relative" title="View and add comments">
+                 <a href="/posts/<%= post._id %>/comments">
+                    <i class="fas fa-comment"></i>
+                 </a>
+                 <% if (post.comments && post.comments.length > 0) { %>
+                   <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                      <%= post.comments.length %>
+                   </span>
+                 <% } %>
+              </div>
+
+              <!-- Share Icon -->
+              <div class="share-btn" data-url="https://infopics.in/posts/<%= post._id %>" data-title="Check out <%= post.location %> on InfoPics" title="Share this post">
+                  <i class="fas fa-share-alt"></i>
+              </div>
             </div>
           </div>
         </div>
-
       </div>
     <% } %>
   <% } %>
