@@ -58,29 +58,40 @@
     const postId = btn.getAttribute('data-id');
     const icon = btn.querySelector('i');
     const badge = btn.querySelector('.badge');
+    const isLiked = icon.classList.contains('liked');
 
     try {
       const res = await fetch(`/posts/${postId}/like`, { method: 'POST' });
       const data = await res.json();
 
-      // Update badge count
-      if (badge) {
-        badge.textContent = data.likes;
-      } else {
-        const newBadge = document.createElement('span');
-        newBadge.className = 'badge bg-danger';
-        newBadge.textContent = data.likes;
-        btn.appendChild(newBadge);
+      if (data.success) {
+        if (isLiked) {
+          // Dislike: remove liked class and decrease badge
+          icon.classList.remove('liked');
+          if (badge) {
+            let count = parseInt(badge.textContent);
+            count = Math.max(count - 1, 0);
+            badge.textContent = count;
+            if (count === 0) badge.remove();
+          }
+        } else {
+          // Like: add liked class and increase badge
+          icon.classList.add('liked');
+          if (badge) {
+            badge.textContent = parseInt(badge.textContent) + 1;
+          } else {
+            const newBadge = document.createElement('span');
+            newBadge.className = 'badge bg-danger';
+            newBadge.textContent = '1';
+            btn.appendChild(newBadge);
+          }
+        }
       }
-
-      // Toggle icon color
-      icon.classList.add('liked');
     } catch (err) {
-      console.error("Like failed:", err);
-      alert("You’ve already liked this post.");
+      console.error("Like toggle failed:", err);
     }
   });
-});
+ });
 
 
  document.querySelectorAll('.comment-btn').forEach(btn => {

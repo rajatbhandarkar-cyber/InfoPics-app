@@ -35,7 +35,7 @@
               <!-- <div class="like-btn" title="Like this post">
                  <i class="fas fa-heart"></i>
               </div> -->
-              <div class="like-btn" data-id="<%= post._id %>">
+              <div class="like-btn" data-id="<%= post._id %>" data-liked="<%= post.likedBy.includes(currUser._id) %>">
                  <i class="fas fa-heart <%= post.likedBy.includes(currUser?._id) ? 'liked' : '' %>"></i>
                  <% if (post.likes && post.likes > 0) { %>
                    <span class="badge bg-danger"><%= post.likes %></span>

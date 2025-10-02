@@ -47,23 +47,27 @@ router
 //Edit Route
 router.get("/:id/edit",isLoggedIn, isOwner,wrapAsync(postController.renderEditForm));
 
-// Like a post (only once per user)
-router.post('/:id/like', isLoggedIn, wrapAsync(async (req, res) => {
-  const post = await Post.findById(req.params.id);
-  const userId = req.user._id;
+router.post("/:id/like", isLoggedIn, async (req, res) => {
+  const { id } = req.params;
+  const post = await Post.findById(id);
 
-  // Check if user already liked the post
-  if (post.likedBy.includes(userId)) {
-    return res.status(400).json({ message: 'You have already liked this post.', likes: post.likes });
+  if (!post) return res.status(404).json({ success: false });
+
+  const userId = req.user._id;
+  const alreadyLiked = post.likedBy.includes(userId);
+
+  if (alreadyLiked) {
+    post.likedBy.pull(userId);
+    post.likes = Math.max(post.likes - 1, 0);
+  } else {
+    post.likedBy.push(userId);
+    post.likes = (post.likes || 0) + 1;
   }
 
-  // Add like
-  post.likes += 1;
-  post.likedBy.push(userId);
   await post.save();
+  res.json({ success: true });
+});
 
-  res.json({ likes: post.likes });
-}));
 
 // Get all comments for a post
 router.get('/:id/comments', wrapAsync(async (req, res) => {
