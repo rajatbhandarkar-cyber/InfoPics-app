@@ -29,6 +29,7 @@
 
           <!-- Wrap share-container in a right-aligned flex box -->
           <div style="width: 100%; display: flex; justify-content: flex-end;">
+           <% if (currUser) { %>
             <div class="share-container d-flex align-items-center mt-3">
               <!-- Like Icon -->
               <!-- <div class="like-btn" title="Like this post">
@@ -56,6 +57,7 @@
                   <i class="fas fa-share-alt"></i>
               </div>
             </div>
+           <% } %>
           </div>
         </div>
       </div>
