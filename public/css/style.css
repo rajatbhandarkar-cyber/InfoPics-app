@@ -171,8 +171,7 @@ main {
   text-decoration: underline;
 }
 
-
-
+/* share icon CSS */
 .share-container {
   display: flex;
   justify-content: flex-end;
@@ -211,6 +210,31 @@ main {
   opacity:1;
 }
 
+
+.comment-submit-btn {
+  background-color: black;
+  color: white;
+  padding: 9px 20px;        /* small button size */
+  border: none;
+  border-radius: 24px;      /* round corners */
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  align-self: flex-start;   /* keeps it aligned left inside flexbox */
+}
+
+.comment-submit-btn:hover {
+  background-color: #333;
+}
+
+.comment-submit-btn{
+  float:left;
+}
+
+
+
+/* comment icon CSS */
 .comment-btn a {
   text-decoration: none;
 }
@@ -235,23 +259,57 @@ main {
   padding: 0.2em 0.4em;
 }
 
+
+/* like icon CSS */
 .like-btn i{
   opacity: 0.7;
 }
 
-.like-btn i:hover{
-  opacity:1;
-  cursor: pointer;
+.like-btn i:hover:not(.liked) {
   color: rgba(0,0,0,1);
   background: #f0f0f0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2); /* optional */
-  opacity:1;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
+
+
+.like-btn,
+.comment-btn {
+  position: relative;
+  width: 36px;
+  height: 36px;
+}
+
+.like-btn i,
+.comment-btn i {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.like-btn .badge,
+.comment-btn .badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(15%, -15%);
+  font-size: 0.65rem;
+  padding: 0.25em 0.45em;
+  border-radius: 50%;
+  background-color: #dc3545;
+  color: white;
+  box-shadow: 0 0 4px rgba(0,0,0,0.2);
+}
+
 
 .full-text{
   display: none;
 
 }
+
+
 
 
 .about-btn {
@@ -274,3 +332,47 @@ main {
 .about-btn{
   float:left;
 }
+
+#comment-list {
+  padding-left: 0;
+}
+
+.comment-item {
+  list-style: none;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.comment-bubble {
+  background-color: #f1f1f1;
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  max-width: 100%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.comment-author {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.comment-text {
+  font-size: 0.9rem;
+  color: #444;
+  line-height: 1.4;
+}
+
+.like-btn i.liked {
+  color: #8B0000 !important; /* deep blood red */
+  text-shadow:
+    0 0 2px rgba(0, 0, 0, 0.2),
+    0 0 4px rgba(139, 0, 0, 0.6); /* match glow */
+  font-weight: bold;
+  transform: scale(1.2);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+

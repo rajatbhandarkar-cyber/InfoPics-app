@@ -31,20 +31,24 @@
           <div style="width: 100%; display: flex; justify-content: flex-end;">
             <div class="share-container d-flex align-items-center mt-3">
               <!-- Like Icon -->
-              <div class="like-btn" title="Like this post">
+              <!-- <div class="like-btn" title="Like this post">
                  <i class="fas fa-heart"></i>
+              </div> -->
+              <div class="like-btn" data-id="<%= post._id %>">
+                 <i class="fas fa-heart <%= post.likedBy.includes(currUser?._id) ? 'liked' : '' %>"></i>
+                 <% if (post.likes && post.likes > 0) { %>
+                   <span class="badge bg-danger"><%= post.likes %></span>
+                 <% } %>
               </div>
 
-              <!-- Comment Icon with Badge -->
-              <div class="comment-btn position-relative" title="View and add comments">
-                 <a href="/posts/<%= post._id %>/comments">
-                    <i class="fas fa-comment"></i>
-                 </a>
-                 <% if (post.comments && post.comments.length > 0) { %>
-                   <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                      <%= post.comments.length %>
-                   </span>
-                 <% } %>
+              <!-- comment-icon -->
+              <div class="comment-btn position-relative" data-id="<%= post._id %>" title="View and add comments">
+                 <i class="fas fa-comment" style="font-size: 1.2rem; color: #000;"></i>
+                    <% if (post.comments && post.comments.length > 0) { %>
+                    <span class="badge">
+                        <%= post.comments.length %>
+                    </span>
+                    <% } %>
               </div>
 
               <!-- Share Icon -->
@@ -103,3 +107,28 @@
     padding: 3rem 1rem;
   }
 </style>
+
+<!-- Comment Modal -->
+<div class="modal fade" id="comment-modal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Comments</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Styled Comment List -->
+        <ul id="comment-list" class="mb-3"></ul>
+
+        <!-- Comment Form -->
+        <form id="comment-form">
+          <input type="hidden" id="comment-post-id">
+          <textarea class="form-control mb-2" id="comment-text" placeholder="Add your comment..." required></textarea>
+          <button type="submit" class="comment-submit-btn mt-3">Post Comment</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
