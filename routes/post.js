@@ -79,7 +79,6 @@ router.get('/:id/comments', wrapAsync(async (req, res) => {
 router.post('/:id/comments', wrapAsync(async (req, res) => {
   const post = await Post.findById(req.params.id);
   const { text, author } = req.body;
-  console.log("Incoming comment body:", req.body);
   post.comments.push({ text, author: author || 'Anonymous' });
   await post.save();
   res.json({ comments: post.comments });
