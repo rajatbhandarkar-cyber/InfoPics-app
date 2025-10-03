@@ -3,6 +3,7 @@ const router = express.Router();
 const wrapAsync = require("../utils/wrapAsync.js");
 const Post = require("../models/post.js");
 const { isLoggedIn, isOwner, validatePost } = require("../middleware.js");
+const mongoose = require("mongoose");
 
 const postController = require("../controllers/posts.js");
 const multer = require("multer");
@@ -45,14 +46,21 @@ router
 // Edit Form
 router.get("/:id/edit", isLoggedIn, isOwner, wrapAsync(postController.renderEditForm));
 
-// Like/Dislike
+// Like/Dislike 
+
 router.post("/:id/like", isLoggedIn, async (req, res) => {
   const { id } = req.params;
-  const post = await Post.findById(id);
+
+  // ✅ Only load fields needed for liking
+  const post = await Post.findById(id).select("likes likedBy");
   if (!post) return res.status(404).json({ success: false });
 
-  const userId = req.user._id;
-  const alreadyLiked = post.likedBy.includes(userId);
+  const userId = req.user?._id;
+  if (!userId || typeof userId !== "object" || !mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({ success: false, error: "Invalid user ID" });
+  }
+
+  const alreadyLiked = post.likedBy.some(uid => uid.equals(userId));
 
   if (alreadyLiked) {
     post.likedBy.pull(userId);
@@ -66,23 +74,51 @@ router.post("/:id/like", isLoggedIn, async (req, res) => {
   res.json({ success: true });
 });
 
+
+
+
 // Get all comments for a post
 router.get("/:id/comments", wrapAsync(async (req, res) => {
   const post = await Post.findById(req.params.id).populate("comments.author");
   res.json({ comments: post.comments });
 }));
 
-router.post("/:id/comments", isLoggedIn, wrapAsync(async (req, res) => {
-  const post = await Post.findById(req.params.id);
+router.post("/:id/comments", isLoggedIn, async (req, res, next) => {
   const { text } = req.body;
+  const { id } = req.params;
+
+  if (!text || text.trim().length === 0) {
+    if (req.headers["content-type"] === "application/json") {
+      return res.status(400).json({ error: "Comment cannot be empty" });
+    }
+    req.flash("error", "Comment cannot be empty");
+    return res.redirect(`/posts/${id}`);
+  }
+
+  const post = await Post.findById(id);
+  if (!post) {
+    if (req.headers["content-type"] === "application/json") {
+      return res.status(404).json({ error: "Post not found" });
+    }
+    req.flash("error", "Post not found");
+    return res.redirect("/posts");
+  }
+
+  post.comments = post.comments.filter(c => {
+    return c.author && typeof c.author === "object" && c.author._bsontype === "ObjectId";
+  });
 
   post.comments.push({ text, author: req.user._id });
   await post.save();
+  await post.populate("comments.author");
 
-  // ✅ Re-fetch and populate after saving
-  const updatedPost = await Post.findById(req.params.id).populate("comments.author");
-  res.json({ comments: updatedPost.comments });
-}));
+  if (req.headers["content-type"] === "application/json") {
+    return res.json({ success: true, comments: post.comments });
+  }
+
+  req.flash("success", "Comment added successfully");
+  res.redirect(`/posts/${post._id}`);
+});
 
 
 module.exports = router;

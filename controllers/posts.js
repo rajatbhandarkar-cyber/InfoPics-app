@@ -19,8 +19,9 @@ module.exports.showPost = async (req,res) => {
             path:"author",
         },
        })
-       .populate("owner");
-    if(!Post){
+       .populate("owner")
+       .populate("comments.author");
+    if(!post){
         req.flash("error","Post you requested for does not exist!");
         res.redirect("/posts");
     }

@@ -90,7 +90,7 @@ app.use("/posts",postRouter);
 app.use("/posts/:id/reviews",reviewRouter);
 app.use("/",userRouter);
 
-app.all("/:path(*)",(req,res,next) => {
+app.all("*",(req,res,next) => {
     next(new ExpressError(404,"page not found"));
 });
 

@@ -80,63 +80,66 @@
     });
   });
 
-  // Open comment modal
+  // Open comment modal and load comments
   document.querySelectorAll(".comment-btn").forEach(btn => {
     btn.addEventListener("click", async () => {
       const postId = btn.getAttribute("data-id");
       document.getElementById("comment-post-id").value = postId;
 
-      const res = await fetch(`/posts/${postId}/comments`);
-      const data = await res.json();
+      try {
+        const res = await fetch(`/posts/${postId}/comments`);
+        const data = await res.json();
 
-      const list = document.getElementById("comment-list");
-      list.innerHTML = "";
+        const list = document.getElementById("comment-list");
+        list.innerHTML = "";
 
-      data.comments.forEach(comment => {
-        const li = document.createElement("li");
-        li.className = "comment-item";
+        data.comments.forEach(comment => {
+          const li = document.createElement("li");
+          li.className = "comment-item";
 
-        const bubble = document.createElement("div");
-        bubble.className = "comment-bubble";
+          const bubble = document.createElement("div");
+          bubble.className = "comment-bubble";
 
-        const author = document.createElement("div");
-        author.className = "comment-author";
-        author.textContent = comment.author?.username || "Anonymous";
+          const author = document.createElement("div");
+          author.className = "comment-author";
+          author.textContent = `@${comment.author?.username || "Anonymous"}`;
 
-        const text = document.createElement("div");
-        text.className = "comment-text";
-        text.textContent = comment.text;
 
-        bubble.appendChild(author);
-        bubble.appendChild(text);
-        li.appendChild(bubble);
-        list.appendChild(li);
-      });
+          const text = document.createElement("div");
+          text.className = "comment-text";
+          text.textContent = comment.text;
 
-      new bootstrap.Modal(document.getElementById("comment-modal")).show();
+          bubble.appendChild(author);
+          bubble.appendChild(text);
+          li.appendChild(bubble);
+          list.appendChild(li);
+        });
+
+        new bootstrap.Modal(document.getElementById("comment-modal")).show();
+      } catch (err) {
+        console.error("Failed to load comments:", err);
+      }
     });
   });
 
-  // Submit new comment
+  // Submit new comment via AJAX
   document.getElementById("comment-form").addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const postId = document.getElementById("comment-post-id").value;
     const text = document.getElementById("comment-text").value.trim();
 
-    if (!text) {
-      alert("Comment cannot be empty");
-      return;
-    }
+    if (!text) return;
 
     try {
       const res = await fetch(`/posts/${postId}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }) // ✅ Removed author field
+        body: JSON.stringify({ text })
       });
 
       const data = await res.json();
+      if (!data.success) throw new Error("Comment failed");
 
       const list = document.getElementById("comment-list");
       list.innerHTML = "";
@@ -150,19 +153,18 @@
 
         const author = document.createElement("div");
         author.className = "comment-author";
-        author.textContent = comment.author?.username ? `@${comment.author.username}` : "Anonymous";
+        author.textContent = `@${comment.author?.username || "Anonymous"}`;
 
-        const text = document.createElement("div");
-        text.className = "comment-text";
-        text.textContent = comment.text;
+        const textDiv = document.createElement("div");
+        textDiv.className = "comment-text";
+        textDiv.textContent = comment.text;
 
         bubble.appendChild(author);
-        bubble.appendChild(text);
+        bubble.appendChild(textDiv);
         li.appendChild(bubble);
         list.appendChild(li);
       });
 
-      // ✅ Update comment badge on post card
       const badge = document.querySelector(`.comment-btn[data-id="${postId}"] .badge`);
       if (badge) {
         badge.textContent = data.comments.length;

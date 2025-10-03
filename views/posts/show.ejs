@@ -26,6 +26,16 @@
     </div>
   </div>
 
+  <% if(currUser) { %>
+  <button class="btn btn-outline-dark comment-btn" data-id="<%= post._id %>">
+    <i class="fas fa-comment"></i> Comment
+    <% if(post.comments.length > 0) { %>
+      <span class="badge"><%= post.comments.length %></span>
+    <% } %>
+  </button>
+  <% } %>
+
+
   <!-- Action Buttons -->
   <div class="row mb-4">
    <div class="col-md-8 offset-md-2">
@@ -127,5 +137,19 @@
       </div>
     </div>
   </div>
+
+  <!-- Comment Modal -->
+ <div class="modal fade" id="comment-modal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="POST" action="/posts/<%= post._id %>/comments" class="modal-content">
+      <div class="modal-body">
+         <textarea name="text" class="form-control" rows="3" required></textarea>
+      </div>
+      <div class="modal-footer">
+         <button type="submit" class="btn btn-dark">Post Comment</button>
+      </div>
+    </form>
+  </div>
+ </div>
 
 </div>
