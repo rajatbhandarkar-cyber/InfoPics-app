@@ -26,16 +26,6 @@
     </div>
   </div>
 
-  <% if(currUser) { %>
-  <button class="btn btn-outline-dark comment-btn" data-id="<%= post._id %>">
-    <i class="fas fa-comment"></i> Comment
-    <% if(post.comments.length > 0) { %>
-      <span class="badge"><%= post.comments.length %></span>
-    <% } %>
-  </button>
-  <% } %>
-
-
   <!-- Action Buttons -->
   <div class="row mb-4">
    <div class="col-md-8 offset-md-2">
