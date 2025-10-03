@@ -101,7 +101,7 @@
 
         const author = document.createElement("div");
         author.className = "comment-author";
-        author.textContent = comment.author;
+        author.textContent = comment.author?.username || "Anonymous";
 
         const text = document.createElement("div");
         text.className = "comment-text";
@@ -133,7 +133,7 @@
       const res = await fetch(`/posts/${postId}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text, author: "Anonymous" })
+        body: JSON.stringify({ text }) // ✅ Removed author field
       });
 
       const data = await res.json();
@@ -150,7 +150,7 @@
 
         const author = document.createElement("div");
         author.className = "comment-author";
-        author.textContent = comment.author;
+        author.textContent = comment.author?.username ? `@${comment.author.username}` : "Anonymous";
 
         const text = document.createElement("div");
         text.className = "comment-text";

@@ -2,55 +2,53 @@ const express = require("express");
 const router = express.Router();
 const wrapAsync = require("../utils/wrapAsync.js");
 const Post = require("../models/post.js");
-const {isLoggedIn,isOwner,validatePost} = require("../middleware.js");
+const { isLoggedIn, isOwner, validatePost } = require("../middleware.js");
 
 const postController = require("../controllers/posts.js");
 const multer = require("multer");
-const {storage} = require("../cloudConfig.js");
-const upload = multer({storage});
-// const upload = multer({ dest: 'uploads/'});
+const { storage } = require("../cloudConfig.js");
+const upload = multer({ storage });
 
+// Home + Create
 router
- .route("/")
- .get(wrapAsync(postController.index))
- .post(
+  .route("/")
+  .get(wrapAsync(postController.index))
+  .post(
     isLoggedIn,
     upload.single("post[image]"),
     validatePost,
     wrapAsync(postController.createPost)
-);
+  );
 
+// New Post Form
+router.get("/new", isLoggedIn, postController.renderNewForm);
 
-//New Route
-router.get("/new",isLoggedIn,postController.renderNewForm);
-
-//search Route
+// Search + About
 router.get("/search", wrapAsync(postController.searchPosts));
-
 router.get("/about", (req, res) => {
-    res.render("posts/about");
+  res.render("posts/about");
 });
 
+// Show, Update, Delete
 router
- .route("/:id")
- .get(wrapAsync(postController.showPost))
- .put(
+  .route("/:id")
+  .get(wrapAsync(postController.showPost))
+  .put(
     isLoggedIn,
     isOwner,
     upload.single("post[image]"),
     validatePost,
     wrapAsync(postController.updatePost)
- )
- .delete(isLoggedIn, isOwner,wrapAsync(postController.destroyPost));    
+  )
+  .delete(isLoggedIn, isOwner, wrapAsync(postController.destroyPost));
 
+// Edit Form
+router.get("/:id/edit", isLoggedIn, isOwner, wrapAsync(postController.renderEditForm));
 
-//Edit Route
-router.get("/:id/edit",isLoggedIn, isOwner,wrapAsync(postController.renderEditForm));
-
+// Like/Dislike
 router.post("/:id/like", isLoggedIn, async (req, res) => {
   const { id } = req.params;
   const post = await Post.findById(id);
-
   if (!post) return res.status(404).json({ success: false });
 
   const userId = req.user._id;
@@ -68,22 +66,23 @@ router.post("/:id/like", isLoggedIn, async (req, res) => {
   res.json({ success: true });
 });
 
-
 // Get all comments for a post
-router.get('/:id/comments', wrapAsync(async (req, res) => {
-  const post = await Post.findById(req.params.id);
+router.get("/:id/comments", wrapAsync(async (req, res) => {
+  const post = await Post.findById(req.params.id).populate("comments.author");
   res.json({ comments: post.comments });
 }));
 
-// Add a new comment to a post
-router.post('/:id/comments', wrapAsync(async (req, res) => {
+router.post("/:id/comments", isLoggedIn, wrapAsync(async (req, res) => {
   const post = await Post.findById(req.params.id);
-  const { text, author } = req.body;
-  post.comments.push({ text, author: author || 'Anonymous' });
+  const { text } = req.body;
+
+  post.comments.push({ text, author: req.user._id });
   await post.save();
-  res.json({ comments: post.comments });
+
+  // ✅ Re-fetch and populate after saving
+  const updatedPost = await Post.findById(req.params.id).populate("comments.author");
+  res.json({ comments: updatedPost.comments });
 }));
 
 
-
-module.exports = router;  
+module.exports = router;

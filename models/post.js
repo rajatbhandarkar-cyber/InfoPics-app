@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Review = require("./review.js");
 
-// Comment sub-schema
+// Comment sub-schema with User reference
 const commentSchema = new Schema({
   text: {
     type: String,
@@ -11,8 +11,9 @@ const commentSchema = new Schema({
     minlength: 1
   },
   author: {
-    type: String,
-    default: "Anonymous"
+    type: Schema.Types.ObjectId,
+    ref: "User", // ✅ Reference to User model
+    required: true
   },
   createdAt: {
     type: Date,
