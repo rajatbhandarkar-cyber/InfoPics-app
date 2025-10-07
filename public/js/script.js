@@ -144,26 +144,26 @@
       const list = document.getElementById("comment-list");
       list.innerHTML = "";
 
-      data.comments.forEach(comment => {
-        const li = document.createElement("li");
-        li.className = "comment-item";
+     [...data.comments].reverse().forEach(comment => {
+     const li = document.createElement("li");
+     li.className = "comment-item";
 
-        const bubble = document.createElement("div");
-        bubble.className = "comment-bubble";
+     const bubble = document.createElement("div");
+     bubble.className = "comment-bubble";
 
-        const author = document.createElement("div");
-        author.className = "comment-author";
-        author.textContent = `@${comment.author?.username || "Anonymous"}`;
+     const author = document.createElement("div");
+     author.className = "comment-author";
+     author.textContent = `@${comment.author?.username || "Anonymous"}`;
 
-        const textDiv = document.createElement("div");
-        textDiv.className = "comment-text";
-        textDiv.textContent = comment.text;
+     const text = document.createElement("div");
+     text.className = "comment-text";
+     text.textContent = comment.text;
 
-        bubble.appendChild(author);
-        bubble.appendChild(textDiv);
-        li.appendChild(bubble);
-        list.appendChild(li);
-      });
+     bubble.appendChild(author);
+     bubble.appendChild(text);
+     li.appendChild(bubble);
+     list.appendChild(li);
+     });
 
       const badge = document.querySelector(`.comment-btn[data-id="${postId}"] .badge`);
       if (badge) {

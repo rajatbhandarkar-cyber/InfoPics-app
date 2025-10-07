@@ -128,17 +128,49 @@
     </div>
   </div>
 
-  <!-- Comment Modal -->
- <div class="modal fade" id="comment-modal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+ <!-- Comment Modal -->
+ <!-- Comment Modal -->
+<div class="modal fade" id="comment-modal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <form method="POST" action="/posts/<%= post._id %>/comments" class="modal-content">
-      <div class="modal-body">
-         <textarea name="text" class="form-control" rows="3" required></textarea>
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Comments</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-footer">
-         <button type="submit" class="btn btn-dark">Post Comment</button>
+
+      <div class="modal-body pt-0">
+        <!-- ✅ Scrollable wrapper contains both form and comments -->
+        <div class="comment-scroll-wrapper">
+
+          <!-- ✅ Sticky form at the top -->
+          <form id="comment-form" class="comment-form px-3">
+            <input type="hidden" id="comment-post-id" name="postId" value="<%= post._id %>" />
+            <div class="mb-3">
+              <textarea id="comment-text" class="form-control" rows="3" placeholder="Add your comment..." required></textarea>
+            </div>
+            <div class="mb-3 text-end">
+              <button type="submit" class="btn btn-dark">Post Comment</button>
+            </div>
+          </form>
+
+          <!-- ✅ Comments scroll below -->
+          <!-- ✅ Comments scroll below -->
+         <ul id="comment-list" class="list-unstyled px-3">
+           <% for(let i = 0; i < 30; i++) { %>
+             <li class="comment-item">
+               <div class="comment-bubble">
+                 <div class="comment-author">User <%= i + 1 %></div>
+                 <div class="comment-text">This is a test comment to trigger scroll.</div>
+               </div>
+             </li>
+           <% } %>
+         </ul>
+
+        </div>
       </div>
-    </form>
+
+    </div>
   </div>
  </div>
 

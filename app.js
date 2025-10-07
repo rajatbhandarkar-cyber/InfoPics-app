@@ -87,7 +87,7 @@ app.get("/", (req, res) => {
 
 
 app.use("/posts",postRouter);
-app.use("/posts/:id/reviews",reviewRouter);
+app.use("/posts",reviewRouter);
 app.use("/",userRouter);
 
 app.all("*",(req,res,next) => {
@@ -103,4 +103,3 @@ app.use((err, req, res, next) => {
 app.listen(8080, () => {
     console.log("server is listening on port 8080");
 });
-

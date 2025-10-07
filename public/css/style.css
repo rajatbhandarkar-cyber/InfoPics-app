@@ -366,13 +366,14 @@ main {
 }
 
 .like-btn i.liked {
-  color: #8B0000 !important; /* deep blood red */
+  color: #F5C518 !important; /* ✨ IMDb-style golden yellow */
   text-shadow:
     0 0 2px rgba(0, 0, 0, 0.2),
-    0 0 4px rgba(139, 0, 0, 0.6); /* match glow */
-  font-weight: bold;
+    0 0 6px rgba(245, 197, 24, 0.5); /* warm glow */
   transform: scale(1.2);
   transition: color 0.2s ease, transform 0.2s ease;
 }
+
+
 
 
