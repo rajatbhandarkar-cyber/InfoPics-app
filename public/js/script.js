@@ -127,7 +127,7 @@
     e.preventDefault();
 
     const postId = document.getElementById("comment-post-id").value;
-    const text = document.getElementById("comment-text").value.trim();
+    const text = document.getElementById("modal-comment-text").value.trim();
 
     if (!text) return;
 
@@ -175,9 +175,11 @@
         document.querySelector(`.comment-btn[data-id="${postId}"]`).appendChild(newBadge);
       }
 
-      document.getElementById("comment-text").value = "";
+      document.getElementById("modal-comment-text").value = "";
     } catch (err) {
       console.error("Comment submission failed:", err);
     }
   });
 })();
+
+

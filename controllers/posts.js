@@ -79,3 +79,49 @@ module.exports.destroyPost = async(req,res) => {
     req.flash("success","Post Deleted!");
     res.redirect("/posts");
 };
+
+module.exports.getComments = async (req, res) => {
+  const { id } = req.params;
+  const post = await Post.findById(id).populate("comments.author");
+  if (!post) return res.status(404).json({ error: "Post not found" });
+
+  res.json({ comments: post.comments });
+};
+
+module.exports.createComment = async (req, res) => {
+  const { id } = req.params;
+  const post = await Post.findById(id);
+  if (!post) return res.status(404).json({ error: "Post not found" });
+
+  post.comments.push({
+  text: req.body.text,
+  author: req.user._id
+  });
+
+  await post.save();
+  await post.populate("comments.author");
+
+  const latestComment = post.comments[post.comments.length - 1];
+  res.json(latestComment);
+};
+
+module.exports.deleteComment = async (req, res) => {
+  const { id, commentId } = req.params;
+  const post = await Post.findById(id);
+  if (!post) {
+    if (req.xhr || req.headers.accept?.includes("application/json")) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+    req.flash("error", "Post not found");
+    return res.redirect("/posts");
+  }
+
+  post.comments = post.comments.filter(c => c._id.toString() !== commentId);
+  await post.save();
+
+  if (req.xhr || req.headers.accept?.includes("application/json")) {
+    return res.json({ success: true });
+  }
+
+  res.redirect(`/posts/${id}#all-comments`);
+};

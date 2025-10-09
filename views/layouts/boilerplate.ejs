@@ -30,11 +30,10 @@
           referrerpolicy="no-referrer" />
     <link href="/css/rating.css" rel="stylesheet"/>
 </head>
-<body>
+<body data-user-id="<%= currUser?._id %>">
     <div class="page-wrapper d-flex flex-column min-vh-100">
         <%- include("../includes/navbar.ejs")%>
-        <%- include("../includes/flash")%>
-
+       
         <!-- Main content grows to fill space -->
         <main class="flex-grow-1">
             <%- body %>

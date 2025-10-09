@@ -8,6 +8,7 @@ html,body{
   height:100%;
   margin:0;
   overflow-x: hidden;
+  scroll-behavior:smooth
 }
 
 .page-wrapper{
@@ -374,6 +375,31 @@ main {
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
+.comment-author button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+  opacity: 0.8;
+}
 
+.comment-author button:hover {
+  background-color: rgba(220, 53, 69, 0.1); /* soft red circle */
+  opacity: 1;
+}
 
+.comment-author i {
+  font-size: 1rem;
+  color: #dc3545;
+  pointer-events: none;
+}
 
+#comment-form {
+  scroll-margin-top: 120px; /* adjust based on your navbar or alert height */
+}
