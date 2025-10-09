@@ -90,6 +90,22 @@ app.use("/posts",postRouter);
 app.use("/posts",reviewRouter);
 app.use("/",userRouter);
 
+app.use((req, res, next) => {
+  res.on("finish", () => {
+    if (res.statusCode === 404) {
+      console.log("Unmatched request:", req.method, req.originalUrl);
+    }
+  });
+  next();
+});
+
+
+app.get("/.well-known/appspecific/com.chrome.devtools.json", (req, res) => {
+  res.status(204).end(); // No Content
+});
+
+
+
 app.all("*",(req,res,next) => {
     next(new ExpressError(404,"page not found"));
 });

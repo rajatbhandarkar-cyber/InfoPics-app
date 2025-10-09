@@ -13,31 +13,53 @@
     }, false);
   });
 
-  // Share button logic
+  //share btn logic 
   document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll(".share-container").forEach(container => {
-      const button = container.querySelector(".share-btn");
-      const postUrl = button.getAttribute("data-url");
-      const postTitle = button.getAttribute("data-title");
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+  document.querySelectorAll(".share-container").forEach(container => {
+    const button = container.querySelector(".share-btn"); // ✅ define button here
+    const postUrl = button.getAttribute("data-url");
+    const postTitle = button.getAttribute("data-title");
 
-      button.addEventListener("click", () => {
-        if (navigator.share) {
-          navigator.share({ title: postTitle, url: postUrl })
-            .then(() => console.log("Successful share"))
-            .catch((error) => {
-              console.log("Error/Fallback to manual:", error);
-              container.classList.toggle("active");
-            });
-        } else {
-          container.classList.toggle("active");
-        }
-      });
+    // rest of your share logic...
+    button.addEventListener("click", async () => {
+      // your code here
+      if (!navigator.share || !isMobile) {
+    const modal = new bootstrap.Modal(document.getElementById("custom-share-modal"));
+    modal.show();
 
-      document.addEventListener("click", (e) => {
-        if (!container.contains(e.target) && container.classList.contains("active")) {
-          container.classList.remove("active");
-        }
-      });
+    // Set up share links
+    document.getElementById("copy-link-btn").onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(postUrl);
+        document.getElementById("copy-link-btn").blur();
+      } catch (err) {
+        alert("Failed to copy link.");
+      }
+    };
+
+    document.getElementById("facebook-share").href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}`;
+    document.getElementById("whatsapp-share").href = `https://web.whatsapp.com/send?text=${encodeURIComponent(postTitle + "\n" + postUrl)}`;
+    document.getElementById("twitter-share").href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(postUrl)}&text=${encodeURIComponent(postTitle)}`;
+    document.getElementById("linkedin-share").href = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(postUrl)}&title=${encodeURIComponent(postTitle)}`;
+
+    return;
+    }
+
+    // Mobile native share logic
+    if (isSharing) return;
+    isSharing = true;
+
+    try {
+      await navigator.share({ title: postTitle, url: postUrl });
+      console.log("Successful share");
+    } catch (error) {
+      console.log("Share failed:", error);
+      alert("Sharing failed or was cancelled.");
+    } finally {
+      isSharing = false;
+    }
+  });
     });
   });
 
