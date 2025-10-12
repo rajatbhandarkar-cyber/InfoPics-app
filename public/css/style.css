@@ -24,10 +24,17 @@ html,body{
 }
 
 .navbar {
+  position:relative;
+  z-index:1100;
   height: 5rem;
   background-color: white;
   margin-bottom:0.2rem;
 }
+
+.navbar-collapse {
+  transition: all 0.3s ease-in-out;
+}
+
 
 .fa-circle-info {
   font-size: 2rem;
@@ -425,6 +432,24 @@ main {
   background-color: transparent;
   color: #000;
 }
+
+@media (max-width: 768px) {
+  .navbar-collapse {
+    position: absolute;
+    top: 60px; /* Adjust based on your navbar height */
+    left: 0;
+    width: 100%;
+    background-color: white;
+    z-index: 1050; /* Higher than post content */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  .navbar-nav {
+    flex-direction: column;
+    padding: 1rem;
+  }
+}
+
 
 
 
