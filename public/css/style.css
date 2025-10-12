@@ -476,3 +476,22 @@ main {
     border-radius: 8px;
   }
 }
+
+@media (min-width: 768px) {
+  .navbar-collapse {
+    opacity: 1 !important;
+    display: flex !important;
+    position: static;
+    background-color: transparent;
+    backdrop-filter: none;
+    box-shadow: none;
+    padding: 0;
+    border-radius: 0;
+  }
+
+  .navbar-nav {
+    flex-direction: row;
+    padding: 0;
+    border-bottom: none;
+  }
+}
