@@ -4,19 +4,18 @@ body {
   min-height: 100vh;
 }
 
-html,body{
-  height:100%;
-  margin:0;
+html, body {
+  height: 100%;
+  margin: 0;
   overflow-x: hidden;
-  scroll-behavior:smooth;
-  overflow-x: hidden;
+  scroll-behavior: smooth;
   overflow-y: visible;
 }
 
-.page-wrapper{
-  display:flex;
+.page-wrapper {
+  display: flex;
   flex-direction: column;
-  min-height:100vh;
+  min-height: 100vh;
 }
 
 .container {
@@ -24,16 +23,25 @@ html,body{
   z-index: 1;
   flex: 1;
   max-width: 1200px;
-  margin:0 auto;
+  margin: 0 auto;
 }
 
 .navbar {
-  position:relative;
-  z-index:1100;
+  position: relative;
+  z-index: 1100;
   height: 5rem;
   background-color: white;
-  margin-bottom:0.2rem;
-  /* border-bottom: 1px solid #ddd; */
+  margin-bottom: 0.2rem;
+}
+
+.navbar-collapse {
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(6px);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .navbar-collapse.show {
@@ -50,6 +58,7 @@ html,body{
   border-bottom: 1px solid #eee;
 }
 
+/* Footer Info */
 .f-info-links a {
   text-decoration: none;
   color: #222222;
@@ -59,7 +68,9 @@ html,body{
   text-decoration: underline;
 }
 
-.f-info-links, .f-info-socials, .f-info-brand {
+.f-info-links,
+.f-info-socials,
+.f-info-brand {
   width: 100%;
   display: flex;
   align-items: center;
@@ -69,7 +80,7 @@ html,body{
 .f-info-socials i {
   font-size: 1.2rem;
   margin-right: 1rem;
-  color:#222222;
+  color: #222222;
 }
 
 .f-info {
@@ -82,32 +93,33 @@ html,body{
   align-items: space-evenly;
 }
 
+/* Grid & Cards */
 .grid {
   margin: 0 auto;
 }
 
 .grid-item {
-    position:relative;
-    width: 340px;
-    margin-bottom: 16px;
-    background: #fff;
-    border-radius: 10px;
-    overflow: hidden;
-    padding:1rem;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    z-index:1;
-}  
+  position: relative;
+  width: 340px;
+  margin-bottom: 16px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 1rem;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 1;
+}
 
 .grid-item:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  transform: translateY(-6px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
 .card-img-top {
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
 }
 
 .card-body {
@@ -119,11 +131,10 @@ html,body{
 }
 
 .card-link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
+  text-decoration: none;
+  color: inherit;
+  display: block;
 }
-
 
 .btns {
   display: flex;
@@ -138,7 +149,6 @@ html,body{
   border: none;
 }
 
-
 .signup-page-wrapper {
   flex: 1;
   display: flex;
@@ -146,24 +156,25 @@ html,body{
 }
 
 main {
-  flex:1;
+  flex: 1;
   padding: 0.5rem 0.5rem 2rem 1rem;
-  position:relative;
+  position: relative;
   z-index: 1;
 }
 
-.care-footer{
-  display:flex;
+.care-footer {
+  display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top:1rem;
+  margin-top: 1rem;
 }
 
+/* Search Input */
 .search-img {
   position: absolute;
   left: 12px;
-  top:50%;
-  transform:translateY(-50%);
+  top: 50%;
+  transform: translateY(-50%);
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -175,6 +186,7 @@ main {
   border-radius: 25px;
 }
 
+/* Read More Button */
 .read-more {
   display: inline-block;
   margin-top: 6px;
@@ -186,24 +198,24 @@ main {
   cursor: pointer;
   text-decoration: none !important;
   transition: color 0.2s ease;
-  opacity:0.8;
+  opacity: 0.8;
   border-radius: 6px;
-  padding:4px 8px;
+  padding: 4px 8px;
 }
 
 .read-more:hover {
   color: rgba(0, 0, 0, 1);
-  background: #f0f0f0; /* soft bluish background */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* subtle shadow */
+  background: #f0f0f0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   text-decoration: underline;
 }
 
-/* share icon CSS */
+/* Share Icons */
 .share-container {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap:1px;
+  gap: 1px;
 }
 
 .share-container > div {
@@ -219,65 +231,59 @@ main {
   justify-content: center;
   border-radius: 50%;
   font-size: 1.2rem;
-  color: #000; /* black color for all icons */
+  color: #000;
   background-color: transparent;
   transition: all 0.2s ease;
   cursor: pointer;
 }
 
 .share-btn i {
-  opacity:0.7;
+  opacity: 0.7;
 }
 
 .share-btn i:hover {
   cursor: pointer;
   color: rgba(0,0,0,1);
   background: #f0f0f0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2); /* optional */
-  opacity:1;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  opacity: 1;
 }
 
-
+/* Comment Button */
 .comment-submit-btn {
   background-color: black;
   color: white;
-  padding: 9px 20px;        /* small button size */
+  padding: 9px 20px;
   border: none;
-  border-radius: 24px;      /* round corners */
+  border-radius: 24px;
   font-size: 16px;
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
-  align-self: flex-start;   /* keeps it aligned left inside flexbox */
+  align-self: flex-start;
+  float: left;
 }
 
 .comment-submit-btn:hover {
   background-color: #333;
 }
 
-.comment-submit-btn{
-  float:left;
-}
-
-
-
-/* comment icon CSS */
+/* Comment Section */
 .comment-btn a {
   text-decoration: none;
 }
 
 .comment-btn i {
-  color: #000; /* override blue */
-  opacity:0.7;
+  color: #000;
+  opacity: 0.7;
 }
 
-.comment-btn i:hover{
+.comment-btn i:hover {
   opacity: 1;
   cursor: pointer;
   color: rgba(0,0,0,1);
   background: #f0f0f0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2); /* optional */
-  opacity:1;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
 .badge {
@@ -286,9 +292,8 @@ main {
   padding: 0.2em 0.4em;
 }
 
-
-/* like icon CSS */
-.like-btn i{
+/* Like Button */
+.like-btn i {
   opacity: 0.7;
 }
 
@@ -297,7 +302,6 @@ main {
   background: #f0f0f0;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
-
 
 .like-btn,
 .comment-btn {
@@ -330,36 +334,30 @@ main {
   box-shadow: 0 0 4px rgba(0,0,0,0.2);
 }
 
-
-.full-text{
+.full-text {
   display: none;
-
 }
 
-
-
-
+/* About Button */
 .about-btn {
   background-color: black;
   color: white;
-  padding: 9px 20px;        /* small button size */
+  padding: 9px 20px;
   border: none;
-  border-radius: 24px;      /* round corners */
+  border-radius: 24px;
   font-size: 16px;
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
-  align-self: flex-start;   /* keeps it aligned left inside flexbox */
+  align-self: flex-start;
+  float: left;
 }
 
 .about-btn:hover {
   background-color: #333;
 }
 
-.about-btn{
-  float:left;
-}
-
+/* Comments List */
 #comment-list {
   padding-left: 0;
 }
@@ -392,15 +390,15 @@ main {
   line-height: 1.4;
 }
 
+/* Liked Icon Style */
 .like-btn i.liked {
-  color: #F5C518 !important; /* ✨ IMDb-style golden yellow */
-  text-shadow:
-    0 0 2px rgba(0, 0, 0, 0.2),
-    0 0 6px rgba(245, 197, 24, 0.5); /* warm glow */
+  color: #F5C518 !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.2), 0 0 6px rgba(245, 197, 24, 0.5);
   transform: scale(1.2);
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
+/* Comment Author Button */
 .comment-author button {
   display: inline-flex;
   align-items: center;
@@ -416,7 +414,7 @@ main {
 }
 
 .comment-author button:hover {
-  background-color: rgba(220, 53, 69, 0.1); /* soft red circle */
+  background-color: rgba(220, 53, 69, 0.1);
   opacity: 1;
 }
 
@@ -427,9 +425,10 @@ main {
 }
 
 #comment-form {
-  scroll-margin-top: 120px; /* adjust based on your navbar or alert height */
+  scroll-margin-top: 120px;
 }
 
+/* Share Modal */
 #custom-share-modal a i {
   color: #000;
   width: 40px;
@@ -441,7 +440,7 @@ main {
 }
 
 #custom-share-modal a i:hover {
-  background-color: #e0e0e0; /* light grey */
+  background-color: #e0e0e0;
 }
 
 #copy-link-btn:focus,
@@ -452,71 +451,30 @@ main {
   color: #000;
 }
 
+/* Responsive */
 @media (max-width: 768px) {
   .navbar-collapse {
-    opacity: 1 !important;
-    position: static;
-    background-color: transparent;
-    backdrop-filter: none;
-    box-shadow: none;
-    padding: 0;
-    border-radius: 0;
-    display: flex !important;
-    align-items: center;
+    position: absolute;
+    top: 60px;
+    left: 0;
     width: 100%;
-    z-index: 1050; /* Higher than post content */
+    background-color: white;
+    z-index: 1050;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 1rem;
   }
 
   .navbar-nav {
-    flex-direction: row;
+    flex-direction: column;
     font-size: 1rem;
     font-weight: 500;
-    padding: 0;
-    border-bottom: none;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #eee;
     color: #333;
   }
 
-  .navbar-nav:hover{
+  .navbar-nav:hover {
     background-color: #f9f9f9;
     border-radius: 8px;
   }
 }
-
-.navbar-collapse {
-  opacity: 1;
-}
-
-@media (min-width: 768px) {
-  .navbar-collapse {
-    opacity: 1 !important;
-    display: flex !important;
-    position: static;
-    background-color: transparent;
-    backdrop-filter: none;
-    box-shadow: none;
-    padding: 0;
-    border-radius: 0;
-  }
-
-  .navbar-nav {
-    flex-direction: row;
-    padding: 0;
-    border-bottom: none;
-  }
-}
-
-
-/* .navbar-toggler {
-  border: none;
-  background-color: transparent;
-  padding: 0.5rem;
-}
-
-.navbar-toggler-icon {
-  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0,0,0,0.7)' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
-} */
-
-
-
-
-
