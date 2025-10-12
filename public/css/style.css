@@ -33,7 +33,7 @@ html,body{
   height: 5rem;
   background-color: white;
   margin-bottom:0.2rem;
-  border-bottom: 1px solid #ddd;
+  /* border-bottom: 1px solid #ddd; */
 }
 
 .navbar-collapse {
