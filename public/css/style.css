@@ -36,16 +36,6 @@ html,body{
   /* border-bottom: 1px solid #ddd; */
 }
 
-.navbar-collapse {
-  opacity: 0;
-  transition: all 0.3s ease-in-out;
-  background-color: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(6px);
-  border-radius: 12px;
-  padding: 1rem 1.5rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
 .navbar-collapse.show {
   opacity: 1;
 }
