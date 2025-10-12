@@ -261,7 +261,6 @@ main {
   text-decoration: none;
   display: inline-block;
   align-self: flex-start;
-  float: left;
 }
 
 .comment-submit-btn:hover {
@@ -350,7 +349,6 @@ main {
   text-decoration: none;
   display: inline-block;
   align-self: flex-start;
-  float: left;
 }
 
 .about-btn:hover {
