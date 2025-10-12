@@ -36,9 +36,17 @@ html,body{
 }
 
 .navbar-collapse {
+  transform: translateY(-20px);
+  opacity: 0;
   transition: all 0.3s ease-in-out;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(6px);
 }
 
+.navbar-collapse.show {
+  transform: translateY(0);
+  opacity: 1;
+}
 
 .fa-circle-info {
   font-size: 2rem;
@@ -46,6 +54,8 @@ html,body{
 
 .nav-link {
   color: #222222 !important;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #eee;
 }
 
 .f-info-links a {
@@ -454,6 +464,8 @@ main {
 
   .navbar-nav {
     flex-direction: column;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #eee;
   }
 }
 
