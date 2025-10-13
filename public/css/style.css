@@ -477,6 +477,15 @@ main {
   }
 }
 
+.btn-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 1060;
+  background-color: transparent;
+  border: none;
+}
+
 @media (min-width: 768px) {
   .navbar-collapse {
     opacity: 1 !important;
@@ -493,5 +502,9 @@ main {
     flex-direction: row;
     padding: 0;
     border-bottom: none;
+  }
+
+  .btn-close {
+    display: none;
   }
 }
