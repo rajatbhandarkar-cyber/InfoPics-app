@@ -33,10 +33,10 @@
         <a class="nav-link" href="/posts/about">about</a>
       </div>
       <div class="navbar-nav ms-auto">
-         <form class="d-flex position-relative" role="search" action="/posts/search" method="GET">
+         <form class="d-flex align-items-center position-relative" role="search" action="/posts/search" method="GET">
            <img src="/images/profile.jpg.jpg" alt="Profile" class="search-img">
            <input name="q"class="form-control me-2 search-inp" type="search" placeholder="Search Locations"/>
-          <button class="btn search-btn" type="submit">
+          <button class="btn search-btn" type="submit" style="padding: 0.5rem 3rem;">
             <i class="fa-solid fa-magnifying-glass"></i>Search
           </button>
          </form>
@@ -44,7 +44,7 @@
        <div class="navbar-nav ms-auto">
         <form class="d-flex align-items-center" role="search">
           <a href="/posts/new" class="btn search-btn text-white text-decoration-none rounded-pill d-flex align-items-center justify-content-center" style="padding: 0.5rem 3rem;">Share Experience</a>
-           <!-- <a href="/posts/new" class="btn search-btn text-decoration-none">Create a post</a> -->
+          <!-- <a href="/posts/new" class="btn search-btn text-decoration-none">Create a post</a> -->
         </form>
         <% if(!currUser) { %>
         <a class="nav-link ms-1"  href="/signup"><b>Sign up</b></a>
