@@ -508,3 +508,9 @@ main {
     display: none;
   }
 }
+
+.navbar-toggler i {
+  font-size: 1.5rem;
+  color: #000;
+}
+

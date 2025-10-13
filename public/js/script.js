@@ -202,4 +202,30 @@
       console.error("Comment submission failed:", err);
     }
   });
+
+  //toggler
+  document.addEventListener('DOMContentLoaded', () => {
+  const toggler = document.querySelector('.navbar-toggler');
+  const menuIcon = document.getElementById('menu-icon');
+  const closeIcon = document.getElementById('close-icon');
+  const navbarCollapse = document.getElementById('navbarNavAltMarkup');
+
+  toggler.addEventListener('click', () => {
+    const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
+
+    if (!isExpanded) {
+      menuIcon.classList.add('d-none');
+      closeIcon.classList.remove('d-none');
+    } else {
+      menuIcon.classList.remove('d-none');
+      closeIcon.classList.add('d-none');
+    }
+  });
+
+  // Optional: Reset icons on collapse hide
+  navbarCollapse.addEventListener('hidden.bs.collapse', () => {
+    menuIcon.classList.remove('d-none');
+    closeIcon.classList.add('d-none');
+  });
+});
 })();
