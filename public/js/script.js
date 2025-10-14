@@ -13,20 +13,34 @@
     }, false);
   });
 
+  let isSharing = false;
+
   //share btn logic 
   document.addEventListener("DOMContentLoaded", () => {
     const isMobile = /Mobi|Android/i.test(navigator.userAgent);
   document.querySelectorAll(".share-container").forEach(container => {
     const button = container.querySelector(".share-btn"); // ✅ define button here
+    if(!button) return;
     const postUrl = button.getAttribute("data-url");
     const postTitle = button.getAttribute("data-title");
 
     // rest of your share logic...
     button.addEventListener("click", async () => {
+      console.log("✅ Share icon clicked for:", postTitle, postUrl);
       // your code here
       if (!navigator.share || !isMobile) {
-    const modal = new bootstrap.Modal(document.getElementById("custom-share-modal"));
+
+    const modalEl = document.getElementById("custom-share-modal");
+    if (!modalEl) {
+    console.warn("Share modal not found in DOM.");
+    return;
+    }
+
+    const modal = new bootstrap.Modal(modalEl);
     modal.show();
+    
+    // const modal = new bootstrap.Modal(document.getElementById("custom-share-modal"));
+    // modal.show();
 
     // Set up share links
     document.getElementById("copy-link-btn").onclick = async () => {
@@ -47,8 +61,6 @@
     }
 
     // Mobile native share logic
-    if (isSharing) return;
-    isSharing = true;
 
     try {
       await navigator.share({ title: postTitle, url: postUrl });
