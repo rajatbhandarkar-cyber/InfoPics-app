@@ -43,19 +43,29 @@
     // modal.show();
 
     // Set up share links
-    document.getElementById("copy-link-btn").onclick = async () => {
-      try {
-        await navigator.clipboard.writeText(postUrl);
-        document.getElementById("copy-link-btn").blur();
-      } catch (err) {
-        alert("Failed to copy link.");
-      }
-    };
+    // Inject post-specific data into modal buttons
+    const copyBtn = document.getElementById("copy-link-btn");
+    const fbBtn = document.getElementById("facebook-share");
+    const waBtn = document.getElementById("whatsapp-share");
+    const twBtn = document.getElementById("twitter-share");
+    const lnBtn = document.getElementById("linkedin-share");
 
-    document.getElementById("facebook-share").href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}`;
-    document.getElementById("whatsapp-share").href = `https://web.whatsapp.com/send?text=${encodeURIComponent(postTitle + "\n" + postUrl)}`;
-    document.getElementById("twitter-share").href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(postUrl)}&text=${encodeURIComponent(postTitle)}`;
-    document.getElementById("linkedin-share").href = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(postUrl)}&title=${encodeURIComponent(postTitle)}`;
+    if (copyBtn && fbBtn && waBtn && twBtn && lnBtn) {
+      copyBtn.onclick = async () => {
+        try {
+        await navigator.clipboard.writeText(postUrl);
+        copyBtn.blur();
+        alert("Link copied to clipboard!");
+        } catch (err) {
+        alert("Failed to copy link.");
+        }
+      };
+
+      fbBtn.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}`;
+      waBtn.href = `https://web.whatsapp.com/send?text=${encodeURIComponent(postTitle + "\n" + postUrl)}`;
+      twBtn.href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(postUrl)}&text=${encodeURIComponent(postTitle)}`;
+      lnBtn.href = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(postUrl)}&title=${encodeURIComponent(postTitle)}`;
+      }
 
     return;
     }

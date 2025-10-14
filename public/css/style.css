@@ -535,6 +535,6 @@ main {
 }
 
 .modal-content {
-  opacity: 1;
-  visibility: visible;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
