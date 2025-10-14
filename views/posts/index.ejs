@@ -29,35 +29,30 @@
 
           <!-- Wrap share-container in a right-aligned flex box -->
           <div style="width: 100%; display: flex; justify-content: flex-end;">
-           <% if (currUser) { %>
             <div class="share-container d-flex align-items-center mt-3">
-              <!-- Like Icon -->
-              <!-- <div class="like-btn" title="Like this post">
-                 <i class="fas fa-heart"></i>
-              </div> -->
-              <div class="like-btn" data-id="<%= post._id %>" data-liked="<%= post.likedBy.includes(currUser._id) %>">
+              <% if (currUser) { %>
+               <div class="like-btn" data-id="<%= post._id %>" data-liked="<%= post.likedBy.includes(currUser._id) %>">
                  <i class="fas fa-heart <%= post.likedBy.includes(currUser?._id) ? 'liked' : '' %>"></i>
                  <% if (post.likes && post.likes > 0) { %>
                    <span class="badge bg-danger"><%= post.likes %></span>
                  <% } %>
-              </div>
+               </div>
 
-              <!-- comment-icon -->
-              <div class="comment-btn position-relative" data-id="<%= post._id %>" title="View and add comments">
+               <!-- comment-icon -->
+               <div class="comment-btn position-relative" data-id="<%= post._id %>" title="View and add comments">
                  <i class="fas fa-comment" style="font-size: 1.2rem; color: #000;"></i>
                     <% if (post.comments && post.comments.length > 0) { %>
                     <span class="badge">
                         <%= post.comments.length %>
                     </span>
                     <% } %>
-              </div>
-
-              <!-- Share Icon -->
+               </div>
+              <% } %>
+              <!-- //share icon// -->
               <div class="share-btn" data-url="https://infopics.in/posts/<%= post._id %>" data-title="Check out <%= post.location %> on InfoPics" title="Share this post">
-                  <i class="fas fa-share-alt"></i>
+                 <i class="fas fa-share-alt"></i>
               </div>
             </div>
-           <% } %>
           </div>
         </div>
       </div>
