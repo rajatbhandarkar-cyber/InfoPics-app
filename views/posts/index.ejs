@@ -17,40 +17,38 @@
           <div class="post-content">
             <p>
               <b><%= post.location %></b><br />
-                <% if (post.description.length > 500) { %>
-                 <span class="short-text"><%= post.description.substring(0, 500) %>...</span>
-                 <span class="full-text" style="display:none;"><%= post.description %></span>
-                 <span class="read-more">Read more</span>
-                <% } else { %>
-                   <%= post.description %>
+              <% if (post.description.length > 500) { %>
+                <span class="short-text"><%= post.description.substring(0, 500) %>...</span>
+                <span class="full-text" style="display:none;"><%= post.description %></span>
+                <span class="read-more">Read more</span>
+              <% } else { %>
+                <%= post.description %>
               <% } %>
             </p>
           </div>
 
-          <!-- Wrap share-container in a right-aligned flex box -->
+          <!-- Share container -->
           <div style="width: 100%; display: flex; justify-content: flex-end;">
             <div class="share-container d-flex align-items-center mt-3">
               <% if (currUser) { %>
-               <div class="like-btn" data-id="<%= post._id %>" data-liked="<%= post.likedBy.includes(currUser._id) %>">
-                 <i class="fas fa-heart <%= post.likedBy.includes(currUser?._id) ? 'liked' : '' %>"></i>
-                 <% if (post.likes && post.likes > 0) { %>
-                   <span class="badge bg-danger"><%= post.likes %></span>
-                 <% } %>
-               </div>
+                <div class="like-btn" data-id="<%= post._id %>" data-liked="<%= post.likedBy.includes(currUser._id) %>">
+                  <i class="fas fa-heart <%= post.likedBy.includes(currUser?._id) ? 'liked' : '' %>"></i>
+                  <% if (post.likes && post.likes > 0) { %>
+                    <span class="badge bg-danger"><%= post.likes %></span>
+                  <% } %>
+                </div>
 
-               <!-- comment-icon -->
-               <div class="comment-btn position-relative" data-id="<%= post._id %>" title="View and add comments">
-                 <i class="fas fa-comment" style="font-size: 1.2rem; color: #000;"></i>
-                    <% if (post.comments && post.comments.length > 0) { %>
-                    <span class="badge">
-                        <%= post.comments.length %>
-                    </span>
-                    <% } %>
-               </div>
+                <div class="comment-btn position-relative" data-id="<%= post._id %>" title="View and add comments">
+                  <i class="fas fa-comment" style="font-size: 1.2rem; color: #000;"></i>
+                  <% if (post.comments && post.comments.length > 0) { %>
+                    <span class="badge"><%= post.comments.length %></span>
+                  <% } %>
+                </div>
               <% } %>
-              <!-- //share icon// -->
+
+              <!-- ✅ Always render share icon -->
               <div class="share-btn" data-url="https://infopics.in/posts/<%= post._id %>" data-title="Check out <%= post.location %> on InfoPics" title="Share this post">
-                 <i class="fas fa-share-alt"></i>
+                <i class="fas fa-share-alt"></i>
               </div>
             </div>
           </div>
@@ -63,7 +61,6 @@
 <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
 <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
 <script>
-  // Masonry init
   var grid = document.querySelector('.grid');
   var msnry;
   if (grid) {
@@ -77,7 +74,6 @@
     });
   }
 
-  // Read more toggle
   document.addEventListener("click", function(e){
     if(e.target.classList.contains("read-more")){
       const card = e.target.closest(".card-body");
@@ -104,47 +100,3 @@
     padding: 3rem 1rem;
   }
 </style>
-
-<!-- Comment Modal -->
-<div class="modal fade" id="comment-modal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Comments</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <!-- Styled Comment List -->
-        <ul id="comment-list" class="mb-3"></ul>
-
-        <!-- Comment Form -->
-        <form id="comment-form">
-          <input type="hidden" id="comment-post-id">
-          <textarea class="form-control mb-2" id="modal-comment-text" placeholder="Add your comment..." required></textarea>
-          <button type="submit" class="comment-submit-btn mt-3">Post Comment</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Custom Share Modal -->
-<div class="modal fade" id="custom-share-modal" tabindex="-1" data-bs-backdrop="true" data-bs-keyboard="true">
-  <div class="modal-dialog modal-sm modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Share this post</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body text-center">
-        <button class="btn btn-outline-dark mb-2" id="copy-link-btn">Copy Link</button>
-        <div class="d-flex justify-content-center gap-3">
-           <a id="facebook-share" target="_blank"><i class="fab fa-facebook fa-lg"></i></a>
-          <a id="whatsapp-share" target="_blank" title="Share on WhatsApp"><i class="fab fa-whatsapp fa-lg"></i></a>
-          <a id="twitter-share" target="_blank"><i class="fab fa-twitter fa-lg"></i></a>
-          <a id="linkedin-share" target="_blank"><i class="fab fa-linkedin fa-lg"></i></a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>

@@ -129,3 +129,24 @@
     }
   });
 </script>
+
+<!-- Share Modal -->
+<div class="modal fade" id="custom-share-modal" tabindex="-1" data-bs-backdrop="true" data-bs-keyboard="true">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Share this post</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        <button class="btn btn-outline-dark mb-2" id="copy-link-btn">Copy Link</button>
+        <div class="d-flex justify-content-center gap-3">
+          <a id="facebook-share" target="_blank"><i class="fab fa-facebook fa-lg"></i></a>
+          <a id="whatsapp-share" target="_blank" title="Share on WhatsApp"><i class="fab fa-whatsapp fa-lg"></i></a>
+          <a id="twitter-share" target="_blank"><i class="fab fa-twitter fa-lg"></i></a>
+          <a id="linkedin-share" target="_blank"><i class="fab fa-linkedin fa-lg"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
