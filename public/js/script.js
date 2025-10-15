@@ -2,13 +2,32 @@
   "use strict";
 
   document.addEventListener("DOMContentLoaded", () => {
-    initShareLogic();
-    initNavbarToggler();
-    initLikeToggle();
-    initCommentModal();
-    initCommentSubmit();
-    initFormValidation();
+  initShareLogic();
+  initNavbarToggler();
+  initLikeToggle();
+  initCommentModal();
+  initCommentSubmit();
+  initFormValidation();
+
+  // ✅ Blur focused elements after modal hides
+  document.querySelectorAll(".modal").forEach(modal => {
+    modal.addEventListener("hidden.bs.modal", () => {
+      requestAnimationFrame(() => {
+        if (document.activeElement && modal.contains(document.activeElement)) {
+          document.activeElement.blur();
+        }
+      });
+    });
   });
+
+  // ✅ Blur close buttons immediately on click
+  document.querySelectorAll(".modal .btn-close").forEach(btn => {
+    btn.addEventListener("click", () => {
+      btn.blur();
+    });
+  });
+  });
+
 
   function initShareLogic() {
   const isMobile = /Mobi|Android/i.test(navigator.userAgent);
@@ -29,8 +48,11 @@
   const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
   modalInstance.show();
   modalEl.addEventListener("hidden.bs.modal", () => {
-    document.activeElement?.blur();
+  if (document.activeElement && modalEl.contains(document.activeElement)) {
+    document.activeElement.blur();
+  }
   });
+
 
 
  
