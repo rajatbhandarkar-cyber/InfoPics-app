@@ -504,9 +504,6 @@ main {
     border-bottom: none;
   }
 
-  .btn-close {
-    display: none;
-  }
 }
 
 .navbar-toggler i {
