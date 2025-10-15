@@ -97,8 +97,8 @@
           <li class="comment-item mb-3">
             <div class="comment-bubble">
               <div class="comment-author d-flex justify-content-between align-items-center">
-                <span>@<%= comment.author.username %></span>
-                <% if (currUser && comment.author._id.equals(currUser._id)) { %>
+                <span>@<%= comment.author?.username || "Anonymous" %></span>
+                <% if (currUser && comment.author && comment.author._id.equals(currUser._id)) { %>
                   <form method="POST" action="/posts/<%= post._id %>/comments/<%= comment._id %>?_method=DELETE" class="d-inline">
                     <button type="submit" class="btn btn-sm p-0 border-0 bg-transparent" title="Delete comment">
                       <i class="fas fa-trash text-danger"></i>
