@@ -102,44 +102,42 @@
   }
 
   function initLikeToggle() {
-    document.querySelectorAll(".like-btn").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const postId = btn.getAttribute("data-id");
-        const icon = btn.querySelector("i");
-        const badge = btn.querySelector(".badge");
-        const isLiked = icon.classList.contains("liked");
+  document.querySelectorAll(".like-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const postId = btn.getAttribute("data-id");
+      const icon = btn.querySelector("i");
+      const badge = btn.querySelector(".badge");
 
-        try {
-          const res = await fetch(`/posts/${postId}/like`, { method: "POST" });
-          const data = await res.json();
+      // Prevent double-clicks
+      if (btn.getAttribute("data-liked") === "true") return;
 
-          if (data.success) {
-            if (isLiked) {
-              icon.classList.remove("liked");
-              if (badge) {
-                let count = parseInt(badge.textContent);
-                count = Math.max(count - 1, 0);
-                badge.textContent = count;
-                if (count === 0) badge.remove();
-              }
-            } else {
-              icon.classList.add("liked");
-              if (badge) {
-                badge.textContent = parseInt(badge.textContent) + 1;
-              } else {
-                const newBadge = document.createElement("span");
-                newBadge.className = "badge bg-danger";
-                newBadge.textContent = "1";
-                btn.appendChild(newBadge);
-              }
-            }
+      try {
+        const res = await fetch(`/posts/${postId}/like`, { method: "POST" });
+        const data = await res.json();
+
+        if (data.success) {
+          icon.classList.add("liked");
+          btn.setAttribute("data-liked", "true");
+
+          if (badge) {
+            badge.textContent = parseInt(badge.textContent) + 1;
+          } else {
+            const newBadge = document.createElement("span");
+            newBadge.className = "badge bg-danger";
+            newBadge.textContent = "1";
+            btn.appendChild(newBadge);
           }
-        } catch (err) {
-          console.error("Like toggle failed:", err);
+
+          // Optional: disable button after liking
+          btn.setAttribute("disabled", true);
         }
-      });
+      } catch (err) {
+        console.error("Like failed:", err);
+      }
     });
-  }
+  });
+}
+
 
   function initCommentModal() {
     document.querySelectorAll(".comment-btn").forEach(btn => {

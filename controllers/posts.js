@@ -125,3 +125,22 @@ module.exports.deleteComment = async (req, res) => {
 
   res.redirect(`/posts/${id}#all-comments`);
 };
+
+module.exports.likePost = async (req, res) => {
+  const { id } = req.params;
+  const post = await Post.findById(id);
+  const userId = req.user._id;
+
+  // Prevent duplicate likes
+  if (post.likedBy.includes(userId)) {
+    req.flash("error", "You've already liked this post.");
+    return res.redirect(`/posts/${id}`);
+  }
+
+  post.likes += 1;
+  post.likedBy.push(userId);
+  await post.save();
+
+  req.flash("success", "You liked this post!");
+  res.redirect(`/posts/${id}`);
+};
