@@ -75,7 +75,6 @@
     };
 
     igBtn.onclick = () => {
-    alert("Instagram doesn’t support direct link sharing. Copy the link and paste it in your story or bio.");
     window.open("https://www.instagram.com/", "_blank");
     };
 
