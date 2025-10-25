@@ -60,10 +60,11 @@
   const copyBtn = document.getElementById("copy-link-btn");
   const fbBtn = document.getElementById("facebook-share");
   const waBtn = document.getElementById("whatsapp-share");
+  const igBtn = document.getElementById("instagram-share");
   const twBtn = document.getElementById("twitter-share");
   const lnBtn = document.getElementById("linkedin-share");
 
-  if (copyBtn && fbBtn && waBtn && twBtn && lnBtn) {
+  if (copyBtn && fbBtn && waBtn && igBtn && twBtn && lnBtn) {
     copyBtn.onclick = async () => {
       try {
         await navigator.clipboard.writeText(postUrl);
@@ -71,6 +72,11 @@
       } catch (err) {
         alert("Failed to copy link.");
       }
+    };
+
+    igBtn.onclick = () => {
+    alert("Instagram doesn’t support direct link sharing. Copy the link and paste it in your story or bio.");
+    window.open("https://www.instagram.com/", "_blank");
     };
 
     fbBtn.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}`;
