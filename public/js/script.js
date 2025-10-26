@@ -67,10 +67,11 @@
   if (copyBtn && fbBtn && waBtn && igBtn && twBtn && lnBtn) {
     copyBtn.onclick = async () => {
       try {
-        await navigator.clipboard.writeText(postUrl);
-        alert("Link copied to clipboard!");
+       await navigator.clipboard.writeText(postUrl);
+       // Optional: show a subtle toast or visual feedback instead
+       console.log("✅ Link copied to clipboard.");
       } catch (err) {
-        alert("Failed to copy link.");
+       console.error("❌ Failed to copy link.");
       }
     };
 
