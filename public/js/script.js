@@ -53,9 +53,6 @@
   }
   });
 
-
-
- 
   // ✅ Wire share buttons
   const copyBtn = document.getElementById("copy-link-btn");
   const fbBtn = document.getElementById("facebook-share");

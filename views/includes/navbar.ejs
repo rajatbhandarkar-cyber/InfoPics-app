@@ -1,58 +1,79 @@
 <style>
-  .search-btn{
+  .search-btn {
     background-color: black;
-    color:#fff;
+    color: #fff;
     border-radius: 25px;
-    padding: 0 1rem 0 1rem;
+    padding: 0 1rem;
   }
-  .search-btn:hover{
+  .search-btn:hover {
     background-color: black;
-    color:#fff;
+    color: #fff;
   }
   .search-btn i {
     display: inline;
     margin-right: 0.5rem;
-}
-  
-  .search-inp{
-    border-radius: 25px;
-    padding:0.5rem 3rem 0.5rem 3rem;
-    font-size:1rem;
   }
- 
+  .search-inp {
+    border-radius: 25px;
+    padding: 0.5rem 3rem;
+    font-size: 1rem;
+  }
+  .search-img {
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .profile-img {
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    margin-left: 0.5rem;
+  }
 </style>
+
 <nav class="navbar navbar-expand-md bg-body-light border-bottom">
   <div class="container-fluid">
     <a class="navbar-brand" href="/posts"><i class="fa-solid fa-circle-info"></i></a>
     <button class="navbar-toggler d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-        <i class="fa-solid fa-bars" id="menu-icon"></i>
-        <i class="fa-solid fa-xmark d-none" id="close-icon"></i>
+      <i class="fa-solid fa-bars" id="menu-icon"></i>
+      <i class="fa-solid fa-xmark d-none" id="close-icon"></i>
     </button>
+
     <div class="navbar-collapse collapse d-md-flex" id="navbarNavAltMarkup">
       <div class="navbar-nav">
         <a class="nav-link" href="/posts">InfoPics</a>
-        <a class="nav-link" href="/posts/about">about</a>
+        <a class="nav-link" href="/posts/about">About</a>
       </div>
+
       <div class="navbar-nav ms-auto">
-         <form class="d-flex align-items-center position-relative" role="search" action="/posts/search" method="GET">
-           <img src="/images/profile.jpg.jpg" alt="Profile" class="search-img">
-           <input name="q"class="form-control me-2 search-inp" type="search" placeholder="Search Locations"/>
-          <button class="btn search-btn" type="submit" style="padding: 0.5rem 1.2rem;">
+        <form class="d-flex align-items-center position-relative" role="search" action="/posts/search" method="GET">
+          <img src="/images/profile.jpg.jpg" alt="Profile" class="search-img" />
+          <input name="q" class="form-control me-2 search-inp ps-5" type="search" placeholder="Search Locations" />
+          <button class="btn search-btn" type="submit">
             <i class="fa-solid fa-magnifying-glass"></i>Search
           </button>
-         </form>
+        </form>
       </div>
-       <div class="navbar-nav ms-auto">
+
+      <div class="navbar-nav ms-auto align-items-center">
         <form class="d-flex align-items-center" role="search">
           <a href="/posts/new" class="btn search-btn text-white text-decoration-none rounded-pill d-flex align-items-center justify-content-center" style="padding: 0.5rem 3rem;">Share Experience</a>
-          <!-- <a href="/posts/new" class="btn search-btn text-decoration-none">Create a post</a> -->
         </form>
-        <% if(!currUser) { %>
-        <a class="nav-link ms-1"  href="/signup"><b>Sign up</b></a>
-        <a class="nav-link" href="/login"><b>Log in</b></a>
-        <% } %>
-         <% if(currUser) { %>
-        <a class="nav-link ms-1" href="/logout"><b>Log out</b></a>
+
+        <% if (!currUser) { %>
+          <a class="nav-link ms-1" href="/signup"><b>Sign up</b></a>
+          <a class="nav-link" href="/login"><b>Log in</b></a>
+        <% } else { %>
+          <a class="nav-link ms-1" href="/logout"><b>Log out</b></a>
+          <% if (currUser.profilePic) { %>
+            <img src="<%= currUser.profilePic %>" alt="Profile" class="profile-img" />
+          <% } %>
         <% } %>
       </div>
     </div>
