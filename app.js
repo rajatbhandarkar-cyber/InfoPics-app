@@ -87,8 +87,13 @@ passport.serializeUser((user, done) => {
   done(null, user._id);
 });
 
+
 passport.deserializeUser(async (id, done) => {
   console.log("🔍 Deserializing user with ID:", id);
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    console.log("❌ Invalid ObjectId:", id);
+    return done(null, false); // Skip deserialization
+  }
   try {
     const user = await User.findById(id);
     done(null, user);
