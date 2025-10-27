@@ -1,5 +1,6 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const mongoose = require("mongoose");
 const User = require("../models/user"); // adjust path if needed
 
 passport.use(new GoogleStrategy({
@@ -10,7 +11,10 @@ passport.use(new GoogleStrategy({
   try {
     const existingUser = await User.findOne({ googleId: profile.id });
 
-    if (existingUser) return done(null, existingUser);
+    if (existingUser) {
+      console.log("✅ Existing Google user:", existingUser);
+      return done(null, existingUser);
+    }
 
     const newUser = new User({
       googleId: profile.id,
@@ -20,18 +24,31 @@ passport.use(new GoogleStrategy({
     });
 
     await newUser.save();
+    console.log("✅ New Google user created:", newUser);
     done(null, newUser);
   } catch (err) {
+    console.log("❌ Error during Google OAuth:", err);
     done(err, null);
   }
 }));
 
 passport.serializeUser((user, done) => {
-//   console.log("Serializing user:", user); // Add this line
-  done(null, user.id);
+  console.log("🔐 Serializing user:", user);
+  console.log("✅ Using _id:", user._id);
+  done(null, user._id);
 });
 
 passport.deserializeUser(async (id, done) => {
-  const user = await User.findById(id);
-  done(null, user);
+  console.log("🔍 Deserializing user with ID:", id);
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    console.log("❌ Invalid ObjectId:", id);
+    return done(null, false);
+  }
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (err) {
+    console.log("❌ Error during deserialization:", err);
+    done(err, null);
+  }
 });
