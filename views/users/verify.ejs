@@ -12,7 +12,16 @@
       <div class="alert alert-success text-center"><%= success %></div>
     <% } %>
 
+    <p class="text-center mb-3">
+      A 6-digit verification code was sent to
+      <strong><%= typeof email !== "undefined" ? email : (tempUser && tempUser.email) || "your email" %></strong>.
+      Enter it below to complete signup.
+    </p>
+
     <form action="/verify/check" method="POST" class="needs-validation" autocomplete="off">
+      <!-- Hidden pendingId allows cross-device verification when a PendingUser exists -->
+      <input type="hidden" name="pendingId" value="<%= typeof pendingId !== 'undefined' ? pendingId : (session && session.pendingId) || '' %>" />
+
       <div class="mb-3">
         <label for="code" class="form-label">Enter the 6-digit code sent to your Gmail</label>
         <input
@@ -32,8 +41,14 @@
 
     <div class="text-center mt-3">
       <form action="/verify/send" method="POST">
+        <!-- keep the pendingId in resend requests too -->
+        <input type="hidden" name="pendingId" value="<%= typeof pendingId !== 'undefined' ? pendingId : (session && session.pendingId) || '' %>" />
         <button type="submit" class="btn btn-link">Resend Code</button>
       </form>
+    </div>
+
+    <div class="text-center mt-2 text-muted small">
+      If you opened this email on a different device, paste the code here. If you used Google Sign-in, your Google profile picture will be preserved when the account is created.
     </div>
   </div>
 </main>

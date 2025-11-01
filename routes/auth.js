@@ -1,18 +1,28 @@
 const express = require("express");
 const passport = require("passport");
 const router = express.Router();
+const PendingUser = require("../models/pendingUser");
 const { sendVerificationEmail } = require("../utils/sendVerificationEmail");
 
-// Start Google OAuth
+// Helper: generate 6-digit code as string
+const generateCode = () => Math.floor(100000 + Math.random() * 900000).toString();
+
+/**
+ * Start Google OAuth
+ */
 router.get(
   "/google",
   passport.authenticate("google", {
     scope: ["profile", "email"],
-    prompt: "select_account"
+    prompt: "select_account",
   })
 );
 
-// Google OAuth callback
+/**
+ * Google OAuth callback
+ * - If existing user by googleId: log in and redirect.
+ * - Else: create PendingUser (with code), send code to email, stash pendingId & tempUser in session, redirect to /verify.
+ */
 router.get("/google/callback", (req, res, next) => {
   passport.authenticate("google", async (err, user, info) => {
     if (err) {
@@ -36,46 +46,78 @@ router.get("/google/callback", (req, res, next) => {
       });
     }
 
-    // Case B — new Google user: create a tempUser in session and redirect to onboarding
-    // info may contain tempUser from the strategy; prefer req.session.tempUser if present
+    // Case B — new Google user: info may contain tempUser from strategy
     const authTemp = info?.tempUser;
     const sessionTemp = req.session?.tempUser;
-
     const sourceTemp = sessionTemp || authTemp;
-    if (sourceTemp) {
-      // Normalize a tempUser shape expected by your signup/onboarding flow
-      const tempUser = {
-        username:
-          (sourceTemp.name || sourceTemp.email || "user")
-            .toString()
-            .replace(/\s+/g, "")
-            .toLowerCase()
-            .slice(0, 18) + Math.floor(Math.random() * 1000),
-        email: sourceTemp.email,
-        googleId: sourceTemp.googleId || sourceTemp.id || null,
-        profilePic: sourceTemp.profilePic || sourceTemp.picture || "/images/default-avatar.png",
-        verified: true, // trust Google email as verified; change if you still want code verification for Google users
-        source: "google"
-      };
 
-      // Persist to session for the inline create-account or signup page to read
-      req.session.tempUser = tempUser;
-
-      // Optionally send a welcome email or verification (commented out)
-      // try { await sendVerificationEmail(tempUser.email, someCode); } catch (e) { console.error(e); }
-
-      // Ensure the session is saved before redirecting
-      return req.session.save(() => {
-        // Redirect to the inline create-account page or signup page where user chooses username (prefilled)
-        // If you use a dedicated route like /create-account, change the URL below
-        return res.redirect("/signup");
-      });
+    if (!sourceTemp) {
+      console.error("❌ Google auth returned no user and no tempUser");
+      req.flash("error", "Authentication failed.");
+      return res.redirect("/login");
     }
 
-    // Fallback: nothing to log in or onboard
-    console.error("❌ Google auth returned no user and no tempUser");
-    req.flash("error", "Authentication failed.");
-    return res.redirect("/login");
+    try {
+      // Build normalized pending data
+      const normalizedUsername =
+        (sourceTemp.name || sourceTemp.email || "user")
+          .toString()
+          .replace(/\s+/g, "")
+          .toLowerCase()
+          .slice(0, 18) + Math.floor(Math.random() * 1000);
+
+      const code = generateCode();
+
+      const pendingPayload = {
+        email: sourceTemp.email,
+        username: normalizedUsername,
+        googleId: sourceTemp.googleId || sourceTemp.id || null,
+        profilePic: sourceTemp.profilePic || sourceTemp.picture || "/images/default-avatar.png",
+        code,
+        source: "google",
+        meta: {
+          // preserve any extra fields you want
+          rawProfile: sourceTemp.rawProfile || null,
+        },
+      };
+
+      // Create PendingUser in DB
+      const pending = new PendingUser(pendingPayload);
+      await pending.save();
+
+      // Send the verification code
+      try {
+        await sendVerificationEmail(pending.email, code);
+        console.log(`📨 Verification code sent to ${pending.email} (pendingId: ${pending._id})`);
+      } catch (emailErr) {
+        console.error("❌ Failed to send verification email for pending user:", emailErr);
+        // proceed — user can request resend from /verify
+      }
+
+      // Persist a small session pointer to the pending record and tempUser preview
+      req.session.pendingId = String(pending._id);
+      req.session.tempUser = {
+        username: pending.username,
+        email: pending.email,
+        profilePic: pending.profilePic,
+        googleId: pending.googleId,
+        source: "google",
+        // do not store code in session — lookup by pendingId on verify
+      };
+
+      console.log("AFTER GOOGLE CALLBACK tempUser (session):", JSON.stringify(req.session.tempUser));
+      console.log("AFTER GOOGLE CALLBACK pendingId:", req.session.pendingId);
+
+      // Ensure session saved before redirecting
+      return req.session.save((saveErr) => {
+        if (saveErr) console.error("❌ Session save error after creating pending:", saveErr);
+        return res.redirect("/verify");
+      });
+    } catch (e) {
+      console.error("❌ Error creating PendingUser after Google OAuth:", e);
+      req.flash("error", "Could not continue signup. Please try again.");
+      return res.redirect("/login");
+    }
   })(req, res, next);
 });
 

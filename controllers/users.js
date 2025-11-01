@@ -1,5 +1,9 @@
 const User = require("../models/user");
+const PendingUser = require("../models/pendingUser");
 const { sendVerificationEmail } = require("../utils/sendVerificationEmail");
+const crypto = require("crypto");
+
+// Helper - generate 6 digit code as string
 const generateCode = () => Math.floor(100000 + Math.random() * 900000).toString();
 
 /**
@@ -15,64 +19,91 @@ module.exports.renderSignupForm = (req, res) => {
 /**
  * Manual signup step 1:
  * - validate input
- * - create req.session.tempUser with verificationCode
+ * - create a PendingUser with verification code
  * - send verification email
+ * - persist pendingId and a small tempUser preview in session
  * - redirect to /verify
  *
- * Do NOT create the DB user here. Creation happens after verification.
+ * The real User record is created only after verification (looked up by PendingUser.code or pendingId).
  */
 module.exports.signup = async (req, res, next) => {
   try {
     console.log("📥 Signup body:", req.body);
     const { newUsername, newEmail, newPassword } = req.body;
 
-    // Basic input presence
     if (!newUsername || !newEmail || !newPassword) {
       req.flash("error", "All fields are required.");
       return res.redirect("/signup");
     }
 
-    // Gmail check
     if (!newEmail.endsWith("@gmail.com")) {
       console.log("❌ Invalid Gmail:", newEmail);
       req.flash("error", "Please use a valid Gmail address.");
       return res.redirect("/signup");
     }
 
-    // Username uniqueness
-    const existingUsername = await User.findOne({ username: newUsername });
-    if (existingUsername) {
-      console.log("❌ Duplicate username:", newUsername);
-      req.flash("error", "Username already taken. Please choose another.");
-      return res.redirect("/signup");
-    }
-
-    // Strength check
-    if (newUsername.length < 3 || newPassword.length < 6) {
+    const cleanUsername = newUsername.trim();
+    if (cleanUsername.length < 3 || newPassword.length < 6) {
       req.flash("error", "Username must be at least 3 characters and password at least 6.");
       return res.redirect("/signup");
     }
 
-    // Create tempUser in session (manual flow)
+    const existingUsername = await User.findOne({ username: cleanUsername });
+    if (existingUsername) {
+      console.log("❌ Duplicate username:", cleanUsername);
+      req.flash("error", "Username already taken. Please choose another.");
+      return res.redirect("/signup");
+    }
+
+    // Generate verification code
     const verificationCode = generateCode();
-    req.session.tempUser = {
-      username: newUsername,
-      email: newEmail,
-      password: newPassword,
-      googleId: null,
-      profilePic: "/images/default-avatar.png",
-      verified: false,
-      verificationCode,
-      source: "manual",
+
+    // Preserve any google data already in session.tempUser (set by OAuth)
+    const sessionTemp = req.session.tempUser || {};
+
+    // Build PendingUser payload: include google fields if present, else keep placeholders
+    const pendingPayload = {
+      email: newEmail.toLowerCase().trim(),
+      username: cleanUsername,
+      // NEVER store raw plaintext passwords in DB; here we keep a placeholder token for manual flows.
+      // Actual password will be set when creating the real User using User.register.
+      passwordHash: crypto.createHash("sha256").update(newPassword).digest("hex"),
+      googleId: sessionTemp.googleId || null,
+      profilePic: sessionTemp.profilePic || "/images/default-avatar.png",
+      code: verificationCode,
+      source: sessionTemp.source === "google" ? "google" : "manual",
+      meta: {
+        createdFrom: "manual-signup",
+      },
     };
 
-    // Send verification email (helper returns a promise)
+    // Create or overwrite any existing pending record for the same email (simpler UX)
+    // You may prefer to keep multiple pending records; this approach keeps one pending per email.
+    let pending = await PendingUser.findOneAndUpdate(
+      { email: pendingPayload.email },
+      pendingPayload,
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    );
+
+    // Persist a small session pointer to the pending record and a preview tempUser
+    req.session.pendingId = String(pending._id);
+    req.session.tempUser = {
+      username: pending.username,
+      email: pending.email,
+      profilePic: pending.profilePic,
+      googleId: pending.googleId,
+      source: pending.source,
+    };
+
+    console.log("AFTER SIGNUP tempUser (session):", JSON.stringify(req.session.tempUser));
+    console.log("AFTER SIGNUP pendingId:", req.session.pendingId);
+
+    // Send verification email (best effort)
     try {
-      await sendVerificationEmail(newEmail, verificationCode);
-      console.log("📨 Verification email sent to:", newEmail);
+      await sendVerificationEmail(pending.email, verificationCode);
+      console.log("📨 Verification email sent to:", pending.email);
     } catch (emailErr) {
       console.error("❌ sendVerificationEmail error:", emailErr);
-      // still proceed to /verify so user can ask to resend
     }
 
     req.flash("success", "Verification code sent to your Gmail.");
@@ -85,18 +116,19 @@ module.exports.signup = async (req, res, next) => {
 };
 
 /**
- * Inline create-account for Google-first users.
- * This route handles the form submitted after a successful Google OAuth when
- * we have req.session.tempUser populated with google info.
- *
- * Expected body: { username, password? }.
- * If password isn't provided we generate a strong random password.
- * We create the real DB user with User.register (passport-local-mongoose),
- * then req.login and req.session.save before redirecting to /posts.
+ * Complete signup after Google-first inline flow.
+ * This helper still creates the real User if session.pendingId/tempUser exist (created by auth.js).
+ * If you prefer to centralize creation in /verify (recommended), you can retire this function.
  */
 module.exports.completeGoogleSignup = async (req, res, next) => {
   try {
-    const temp = req.session.tempUser;
+    // Prefer pending pointer if available
+    const pendingId = req.session.pendingId;
+    let pending = null;
+    if (pendingId) pending = await PendingUser.findById(pendingId);
+
+    // Fallback to session.tempUser (less reliable if user switched devices)
+    const temp = pending || req.session.tempUser;
     if (!temp || temp.source !== "google") {
       req.flash("error", "No Google signup in progress. Please sign in with Google first.");
       return res.redirect("/login");
@@ -105,7 +137,7 @@ module.exports.completeGoogleSignup = async (req, res, next) => {
     const { username, password } = req.body;
     if (!username || username.length < 3) {
       req.flash("error", "Username must be at least 3 characters.");
-      return res.redirect("/signup"); // or to the inline create-account page if different
+      return res.redirect("/signup");
     }
 
     // Ensure username is unique
@@ -115,21 +147,30 @@ module.exports.completeGoogleSignup = async (req, res, next) => {
       return res.redirect("/signup");
     }
 
-    // Prepare DB user object
+    // Build userData from pending (prefer DB pending values)
     const userData = {
       username,
-      email: temp.email,
-      googleId: temp.googleId || null,
-      profilePic: temp.profilePic || "/images/default-avatar.png",
-      verified: true
+      email: pending?.email || temp.email,
+      profilePic: pending?.profilePic || temp.profilePic || "/images/default-avatar.png",
+      googleId: pending?.googleId || temp.googleId || null,
+      verified: true,
     };
 
-    // Use User.register so passport-local-mongoose handles hashing and metadata
     const chosenPassword = password && password.length >= 6 ? password : Math.random().toString(36).slice(2, 12);
     const newUser = await User.register(new User(userData), chosenPassword);
 
-    // Log the user in and persist session before redirect
+    // Remove pending record if present
+    if (pending) {
+      try {
+        await PendingUser.findByIdAndDelete(pending._id);
+      } catch (e) {
+        console.error("⚠️ Could not delete PendingUser after creating User:", e);
+      }
+    }
+
+    // Log in and save session
     req.login(newUser, (err) => {
+      console.log("DEBUG req.login callback — loginErr:", err);
       if (err) {
         console.error("❌ Login error after Google signup:", err);
         req.flash("error", "Login failed. Please try logging in.");
@@ -137,8 +178,8 @@ module.exports.completeGoogleSignup = async (req, res, next) => {
       }
       req.session.save((saveErr) => {
         if (saveErr) console.error("❌ Session save error:", saveErr);
-        // Clear tempUser from session
         delete req.session.tempUser;
+        delete req.session.pendingId;
         req.flash("success", "Account created. Welcome to InfoPics!");
         return res.redirect("/posts");
       });

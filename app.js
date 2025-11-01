@@ -14,10 +14,8 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const passport = require("passport");
-const User = require("./models/user.js");
 
 // ✅ Load Passport strategies and serialization BEFORE passport.initialize()
-//    This ensures Passport knows how to serialize/deserialize before any login happens.
 require("./config/passport");
 
 // ✅ Routers
@@ -68,7 +66,7 @@ const sessionOptions = {
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure: false,
+    secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   },
@@ -81,13 +79,28 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
-// ✅ Global Middleware
+// ✅ Global Middleware — expose useful locals to views including session/pendingId/tempUser
 app.use((req, res, next) => {
   console.log("🔍 Session passport user:", req.session.passport?.user);
   console.log("🔍 Current req.user:", req.user);
+
+  // flash messages
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
+
+  // authenticated user
   res.locals.currUser = req.user || null;
+
+  // expose session for templates and small helpers (avoid dumping secrets there)
+  res.locals.session = req.session || {};
+
+  // convenience: expose pendingId and tempUser top-level too
+  res.locals.pendingId = req.session?.pendingId || null;
+  res.locals.tempUser = req.session?.tempUser || null;
+
+  // provide app base url to views if needed
+  res.locals.APP_BASE_URL = process.env.APP_BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+
   next();
 });
 
@@ -123,7 +136,11 @@ app.get("/test-session", (req, res) => {
 });
 
 // ✅ Error Handling
-app.all("*", (req, res, next) => next(new ExpressError(404, "Page not found")));
+app.all("*", (req, res, next) => {
+  console.log("🔍 Unmatched route requested:", req.method, req.originalUrl);
+  next(new ExpressError(404, "Page not found"));
+});
+
 app.use((err, req, res, next) => {
   console.log("❌ ERROR STACK", err);
   const { statusCode = 500, message = "Something went wrong" } = err;
