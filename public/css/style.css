@@ -567,3 +567,92 @@ body.modal-open {
   opacity: 1 !important;
   visibility: visible !important;
 }
+
+
+/* //profile icon */
+
+.profile-img {
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  margin-left: 0.5rem;
+  cursor: pointer;
+}
+
+.profile-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  width: 220px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 1000;
+  text-align: center;
+}
+
+.dropdown-content .dropdown-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
+}
+
+.dropdown-content p {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.logout-btn {
+  display: block;
+  margin-top: 1rem;
+  color: #d00;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* .dropdown-menu {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  border-radius: 8px;
+} */
+
+.dropdown-menu {
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  border-radius: 12px;
+}
+.dropdown-menu h5 {
+  font-weight: 600;
+}
+
+.auth-btn {
+  padding: 0.5rem 3rem;
+  border-radius: 25px;
+  width: 100%;
+  max-width: 280px;
+  white-space: nowrap;
+}
+
+.btn-pill {
+  border-radius: 25px;
+  padding: 0.5rem 2.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+
+

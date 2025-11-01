@@ -1,0 +1,89 @@
+<% layout("/layouts/boilerplate") %>
+
+<main class="flex-grow-1 d-flex align-items-center justify-content-center">
+  <div class="row w-100" style="max-width: 680px;">
+    <h1 class="text-center mb-3">Finish Creating Your InfoPics Account</h1>
+
+    <% if (locals.error && error.length > 0) { %>
+      <div class="alert alert-danger text-center"><%= error %></div>
+    <% } %>
+
+    <% if (locals.success && success.length > 0) { %>
+      <div class="alert alert-success text-center"><%= success %></div>
+    <% } %>
+
+    <div class="col-12">
+      <div class="d-flex align-items-center mb-3">
+        <div class="me-3">
+          <img
+            src="<%= tempUser && tempUser.profilePic ? tempUser.profilePic : '/images/default-avatar.png' %>"
+            alt="avatar"
+            width="72"
+            height="72"
+            class="rounded-circle"
+          />
+        </div>
+        <div>
+          <div class="fw-bold"><%= tempUser ? (tempUser.email || '') : '' %></div>
+          <div class="text-muted">Signed in with Google. Choose a username to finish.</div>
+        </div>
+      </div>
+
+      <form action="/create-account" method="POST" class="needs-validation" novalidate autocomplete="off">
+        <div class="mb-3">
+          <label for="username" class="form-label">Choose a username</label>
+          <input
+            id="username"
+            name="username"
+            type="text"
+            class="form-control"
+            required
+            minlength="3"
+            maxlength="30"
+            value="<%= tempUser ? (tempUser.username || '') : '' %>"
+            placeholder="e.g., travelraj"
+          />
+          <div class="invalid-feedback">Please choose a username (3+ characters).</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">Create a password (optional)</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            class="form-control"
+            minlength="6"
+            placeholder="Leave blank to skip (we'll create a secure password)"
+            autocomplete="new-password"
+          />
+          <div class="form-text">If you skip, you can set a password later from profile settings.</div>
+        </div>
+
+        <button type="submit" class="btn btn-success w-100">Create Account & Continue</button>
+      </form>
+
+      <div class="text-center mt-3">
+        <a href="/signup" class="btn btn-link">Back to Sign Up</a>
+        <a href="/logout" class="btn btn-link">Sign out and choose another account</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  // Minimal bootstrap validation — does not block server-side redirects
+  (function () {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms).forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  })();
+</script>

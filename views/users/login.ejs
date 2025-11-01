@@ -2,31 +2,74 @@
 
 <main class="flex-grow-1 d-flex align-items-center justify-content-center">
   <div class="row w-100" style="max-width: 700px;">
-    <h1 class="text-center">Login</h1>
-    <div class="col-12">
-     <form action ="/login" method="POST" class="needs-validation" novalidate>
-        <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input 
-            name="username"
-            id="username"
-            type="text"
-            class="form-control"
-            required
-            />
-        </div>
-         <div class="mb-3">
+    <% if (tempUser) { %>
+      <div class="col-12 text-center mb-4">
+        <h1 class="mb-2">Complete Your InfoPics Account</h1>
+        <p class="text-muted">We found a pending account for <strong><%= tempUser.email %></strong></p>
+        <img src="<%= tempUser.profilePic || '/images/default-avatar.png' %>" class="rounded-circle mb-3" style="width:72px; height:72px;" />
+      </div>
+
+      <div class="col-12 mb-3">
+        <a href="/create-account" class="btn btn-success w-100 mb-2">Choose username & finish account</a>
+        <a href="/auth/google" class="btn btn-outline-primary w-100">Sign in with a different Google account</a>
+      </div>
+
+      <div class="col-12 text-center">
+        <form action="/logout" method="GET">
+          <button type="submit" class="btn btn-link">Sign out</button>
+        </form>
+      </div>
+
+    <% } else { %>
+
+      <div class="col-12">
+        <h1 class="text-center mb-3">Log in to InfoPics</h1>
+
+        <% if (locals.error && error.length > 0) { %>
+          <div class="alert alert-danger text-center"><%= error %></div>
+        <% } %>
+
+        <% if (locals.success && success.length > 0) { %>
+          <div class="alert alert-success text-center"><%= success %></div>
+        <% } %>
+
+        <form action="/login" method="POST" class="needs-validation" novalidate autocomplete="off">
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input id="email" name="email" type="email" class="form-control" required autocomplete="username" />
+          </div>
+
+          <div class="mb-3">
             <label for="password" class="form-label">Password</label>
-            <input 
-            name="password"
-            id="password"
-            type="password"
-            class="form-control"
-            required
-            />
+            <input id="password" name="password" type="password" class="form-control" required autocomplete="current-password" />
+          </div>
+
+          <button type="submit" class="btn btn-success w-100">Sign In</button>
+        </form>
+
+        <div class="text-center mt-3">
+          <a href="/auth/google" class="btn btn-outline-primary w-100 mb-2">Continue with Google</a>
+          <a href="/signup" class="btn btn-link">Create an account</a>
         </div>
-        <button class="btn btn-success">Login</button>
-     </form>
-    </div>
-</div>
+      </div>
+
+    <% } %>
+  </div>
 </main>
+
+<script>
+  // Keep client validation minimal and non-blocking for server redirects
+  (function () {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms).forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  })();
+</script>
