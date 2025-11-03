@@ -12,7 +12,7 @@ const commentSchema = new Schema({
   },
   author: {
     type: Schema.Types.ObjectId,
-    ref: "User", // ✅ Reference to User model
+    ref: "User",
     required: true
   },
   createdAt: {
@@ -21,10 +21,11 @@ const commentSchema = new Schema({
   }
 });
 
+// Post schema
 const postSchema = new Schema({
   image: {
     url: String,
-    filename: String,
+    filename: String
   },
   location: {
     type: String,
@@ -33,7 +34,7 @@ const postSchema = new Schema({
       validator: function (v) {
         return /^[A-Za-z\s]+$/.test(v);
       },
-      message: props => `${props.value} is not a valid location. Only letters are allowed.`,
+      message: props => `${props.value} is not a valid location. Only letters are allowed.`
     }
   },
   country: {
@@ -43,7 +44,7 @@ const postSchema = new Schema({
       validator: function (v) {
         return /^[A-Za-z\s]+$/.test(v);
       },
-      message: props => `${props.value} is not a valid country. Only letters are allowed.`,
+      message: props => `${props.value} is not a valid country. Only letters are allowed.`
     }
   },
   description: {
@@ -53,21 +54,34 @@ const postSchema = new Schema({
       validator: function (v) {
         return /[A-Za-z]/.test(v) && v.trim().length >= 3;
       },
-      message: props => `Description must contain at least one alphabet and be meaningful.`,
+      message: props => `Description must contain at least one alphabet and be meaningful.`
     }
   },
+
+  // Reviews (referenced)
   reviews: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Review",
-    },
+      ref: "Review"
+    }
   ],
+
+  // Owner reference (canonical)
   owner: {
     type: Schema.Types.ObjectId,
     ref: "User",
+    required: true,
+    index: true
   },
 
-  // ✅ Like system
+  // Denormalized username for fast filtering by username (keeps historical username)
+  ownerUsername: {
+    type: String,
+    trim: true,
+    index: true
+  },
+
+  // Like system
   likes: {
     type: Number,
     default: 0
@@ -80,7 +94,7 @@ const postSchema = new Schema({
   ],
 
   comments: [commentSchema]
-});
+}, { timestamps: true });
 
 // Cleanup reviews on post deletion
 postSchema.post("findOneAndDelete", async (post) => {
@@ -88,6 +102,12 @@ postSchema.post("findOneAndDelete", async (post) => {
     await Review.deleteMany({ _id: { $in: post.reviews } });
   }
 });
+
+// Convenience static: find posts by username (denormalized)
+postSchema.statics.findByOwnerUsername = function(username, opts = {}) {
+  const query = { ownerUsername: username };
+  return this.find(query).sort({ createdAt: -1 }).setOptions(opts);
+};
 
 const Post = mongoose.model("Post", postSchema);
 module.exports = Post;

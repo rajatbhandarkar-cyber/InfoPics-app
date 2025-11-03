@@ -1,23 +1,34 @@
 <% layout('/layouts/boilerplate') %>
 
+<%
+// Accept either `allPosts` (existing) or `posts` (my-posts route).
+const list = (typeof posts !== 'undefined') ? posts : (typeof allPosts !== 'undefined' ? allPosts : []);
+%>
+
 <div class="grid">
-  <% if (allPosts.length === 0) { %>
+  <% if (!list || list.length === 0) { %>
     <div class="no-posts text-center w-100 my-5">
-      <h4>No posts found for this location.</h4>
-      <p class="text-muted">Try searching with a different keyword.</p>
+      <h4>No posts found.</h4>
+      <p class="text-muted">
+        <% if (typeof posts !== 'undefined') { %>
+          You haven't shared any experiences yet. <a href="/posts/new">Share one now</a>.
+        <% } else { %>
+          Try searching with a different keyword.
+        <% } %>
+      </p>
     </div>
   <% } else { %>
-    <% for (let post of allPosts) { %>
+    <% for (let post of list) { %>
       <div class="grid-item post-card">
         <a href="/posts/<%= post._id %>" class="card-link">
-          <img src="<%= post.image.url %>" class="card-img-top" alt="post_image">
+          <img src="<%= post.image && post.image.url ? post.image.url : '/images/default-post.png' %>" class="card-img-top" alt="post_image">
         </a>
 
         <div class="card-body">
           <div class="post-content">
             <p>
               <b><%= post.location %></b><br />
-              <% if (post.description.length > 500) { %>
+              <% if (post.description && post.description.length > 500) { %>
                 <span class="short-text"><%= post.description.substring(0, 500) %>...</span>
                 <span class="full-text" style="display:none;"><%= post.description %></span>
                 <span class="read-more">Read more</span>
@@ -31,8 +42,8 @@
           <div style="width: 100%; display: flex; justify-content: flex-end;">
             <div class="share-container d-flex align-items-center mt-3">
               <% if (currUser) { %>
-                <div class="like-btn" data-id="<%= post._id %>" data-liked="<%= post.likedBy.includes(currUser._id) %>">
-                  <i class="fas fa-heart <%= post.likedBy.includes(currUser?._id) ? 'liked' : '' %>"></i>
+                <div class="like-btn" data-id="<%= post._id %>" data-liked="<%= (post.likedBy || []).some(id => id.toString() === (currUser._id && currUser._id.toString())) %>">
+                  <i class="fas fa-heart <%= (post.likedBy || []).some(id => id.toString() === (currUser._id && currUser._id.toString())) ? 'liked' : '' %>"></i>
                   <% if (post.likes && post.likes > 0) { %>
                     <span class="badge bg-danger"><%= post.likes %></span>
                   <% } %>
@@ -46,7 +57,7 @@
                 </div>
               <% } %>
 
-              <!-- ✅ Always render share icon -->
+              <!-- Always render share icon -->
               <div class="share-btn" data-url="https://infopics.in/posts/<%= post._id %>" data-title="Check out <%= post.location %> on InfoPics" title="Share this post">
                 <i class="fas fa-share-alt"></i>
               </div>

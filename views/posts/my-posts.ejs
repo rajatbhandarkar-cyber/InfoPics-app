@@ -1,0 +1,110 @@
+<% layout('/layouts/boilerplate') %>
+
+<%
+// Use `posts` (from controller) — fall back to `allPosts` if needed
+const list = (typeof posts !== 'undefined') ? posts : (typeof allPosts !== 'undefined' ? allPosts : []);
+%>
+
+<div class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>My Posts</h3>
+    <a href="/posts/new" class="btn btn-primary">Share Experience</a>
+  </div>
+
+  <% if (!list || list.length === 0) { %>
+    <div class="no-posts text-center w-100 my-5">
+      <h4>You haven't shared any experiences yet.</h4>
+      <p class="text-muted">Start by clicking <a href="/posts/new">Share Experience</a>.</p>
+    </div>
+  <% } else { %>
+    <div class="grid">
+      <% for (let post of list) { %>
+        <div class="grid-item post-card">
+          <a href="/posts/<%= post._id %>" class="card-link">
+            <img src="<%= post.image && post.image.url ? post.image.url : '/images/default-post.png' %>" class="card-img-top" alt="post_image">
+          </a>
+
+          <div class="card-body">
+            <div class="post-content">
+              <p>
+                <b><%= post.location %></b><br />
+                <% if (post.description && post.description.length > 300) { %>
+                  <span class="short-text"><%= post.description.substring(0, 300) %>...</span>
+                  <span class="full-text" style="display:none;"><%= post.description %></span>
+                  <span class="read-more">Read more</span>
+                <% } else { %>
+                  <%= post.description %>
+                <% } %>
+              </p>
+            </div>
+
+            <div style="width: 100%; display: flex; justify-content: flex-end;">
+              <div class="share-container d-flex align-items-center mt-3">
+                <% if (currUser) { %>
+                  <div class="like-btn" data-id="<%= post._id %>">
+                    <i class="fas fa-heart <%= (post.likedBy || []).some(id => id.toString() === (currUser._id && currUser._id.toString())) ? 'liked' : '' %>"></i>
+                    <% if (post.likes && post.likes > 0) { %>
+                      <span class="badge bg-danger"><%= post.likes %></span>
+                    <% } %>
+                  </div>
+
+                  <div class="comment-btn position-relative" data-id="<%= post._id %>" title="View and add comments">
+                    <i class="fas fa-comment" style="font-size: 1.2rem; color: #000;"></i>
+                    <% if (post.comments && post.comments.length > 0) { %>
+                      <span class="badge"><%= post.comments.length %></span>
+                    <% } %>
+                  </div>
+                <% } %>
+
+                <div class="share-btn" data-url="https://infopics.in/posts/<%= post._id %>" data-title="Check out <%= post.location %> on InfoPics" title="Share this post">
+                  <i class="fas fa-share-alt"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  <% } %>
+</div>
+
+<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+<script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+<script>
+  var grid = document.querySelector('.grid');
+  var msnry;
+  if (grid) {
+    imagesLoaded(grid, function() {
+      msnry = new Masonry(grid, {
+        itemSelector: '.grid-item',
+        columnWidth: 340,
+        gutter: 16,
+        fitWidth: true
+      });
+    });
+  }
+
+  document.addEventListener("click", function(e){
+    if(e.target.classList.contains("read-more")){
+      const card = e.target.closest(".card-body");
+      const shortText = card.querySelector(".short-text");
+      const fullText = card.querySelector(".full-text");
+
+      if(fullText.style.display === "none"){
+        shortText.style.display = "none";
+        fullText.style.display = "inline";
+        e.target.textContent = "Show less";
+      } else {
+        shortText.style.display = "inline";
+        fullText.style.display = "none";
+        e.target.textContent = "Read more";
+      }
+
+      if (msnry) msnry.layout();
+    }
+  });
+</script>
+
+<style>
+  .no-posts { padding: 3rem 1rem; }
+</style>

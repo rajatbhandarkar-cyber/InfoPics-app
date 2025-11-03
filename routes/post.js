@@ -24,6 +24,33 @@ router
 // New Post Form
 router.get("/new", isLoggedIn, postController.renderNewForm);
 
+// My Posts - show only posts created by the logged-in user (filtered by username)
+router.get(
+  "/my-posts",
+  isLoggedIn,
+  wrapAsync(async (req, res, next) => {
+    try {
+      const username = req.user && req.user.username;
+      if (!username) {
+        req.flash && req.flash("error", "Unable to identify current user");
+        return res.redirect("/posts");
+      }
+
+      // If your Post schema stores the author's username as `authorUsername` (string)
+      const posts = await Post.find({ authorUsername: username })
+        .sort({ createdAt: -1 })
+        .lean();
+
+      // --- ALTERNATIVE (recommended) if your Post schema stores author as ObjectId:
+      // const posts = await Post.find({ author: req.user._id }).sort({ createdAt: -1 }).populate('author', 'username profilePic').lean();
+
+      res.render("posts/my-posts", { posts, currUser: req.user });
+    } catch (err) {
+      next(err);
+    }
+  })
+);
+
 // Search + About
 router.get("/search", wrapAsync(postController.searchPosts));
 router.get("/about", (req, res) => {
@@ -47,7 +74,6 @@ router
 router.get("/:id/edit", isLoggedIn, isOwner, wrapAsync(postController.renderEditForm));
 
 // Like/Dislike 
-
 router.post("/:id/like", isLoggedIn, async (req, res) => {
   const { id } = req.params;
 
@@ -86,13 +112,11 @@ router.delete("/:id/comments/:commentId", isLoggedIn, wrapAsync(async (req, res)
   await post.save();
 
   if (req.xhr || req.headers.accept?.includes("application/json")) {
-  return res.json({ success: true });
+    return res.json({ success: true });
   }
 
   res.redirect(`/posts/${id}#all-comments`);
 }));
-
-
 
 // Get all comments for a post
 router.get("/:id/comments", wrapAsync(async (req, res) => {
@@ -133,7 +157,5 @@ router.post("/:id/comments", isLoggedIn, async (req, res, next) => {
 
   res.redirect(`/posts/${post._id}#all-comments`);
 });
-
-
 
 module.exports = router;
