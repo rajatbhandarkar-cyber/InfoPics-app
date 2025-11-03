@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/user.js");
-const PendingUser = require("../models/pendingUser");
 const wrapAsync = require("../utils/wrapAsync");
 const passport = require("passport");
 
@@ -9,15 +8,21 @@ const userController = require("../controllers/users.js");
 
 /**
  * GET /signup
- * - If coming from Google flow, req.session.tempUser will prefill fields
+ * - Show a simple signup page (CTA to /auth/google).
+ * - If req.session.tempUser exists (rare), pass it to the view.
  */
 router
   .route("/signup")
   .get(userController.renderSignupForm)
-  .post(wrapAsync(userController.signup));
+  // For unified flow, POST /signup simply starts Google OAuth
+  .post((req, res) => {
+    // Start OAuth onboarding immediately
+    return res.redirect("/auth/google");
+  });
 
 /**
- * Local login
+ * Local login (username + password)
+ * - Users authenticate using username (not email)
  */
 router
   .route("/login")
@@ -32,7 +37,7 @@ router
     }),
     (req, res) => {
       req.flash("success", "Welcome back to InfoPics!");
-      // ensure session persisted before redirect to avoid races in some environments
+      // ensure session persisted before redirect to avoid races
       req.session.save(() => {
         const redirectUrl = res.locals.redirectUrl || "/posts";
         res.redirect(redirectUrl);
@@ -46,109 +51,97 @@ router
 router.get("/logout", userController.logout);
 
 /**
- * Inline create-account page (GET)
- * - Used for Google-first flow: user chooses username (and optional password)
- * - If a pendingId exists, prefer data from PendingUser
+ * GET /create-account
+ * - Renders the create-account page using req.session.tempUser (set after Google OAuth)
  */
-router.get("/create-account", wrapAsync(async (req, res) => {
-  let tempUser = req.session.tempUser;
-  if (req.session.pendingId) {
-    const pending = await PendingUser.findById(req.session.pendingId).lean();
-    if (pending) {
-      tempUser = {
-        username: pending.username,
-        email: pending.email,
-        profilePic: pending.profilePic,
-        googleId: pending.googleId,
-        source: pending.source,
-      };
-      // also keep a session preview
-      req.session.tempUser = tempUser;
+router.get(
+  "/create-account",
+  wrapAsync(async (req, res) => {
+    const tempUser = req.session.tempUser;
+    if (!tempUser) {
+      req.flash("error", "No signup in progress. Please sign in with Google to continue.");
+      return res.redirect("/signup");
     }
-  }
-
-  if (!tempUser) {
-    req.flash("error", "No signup in progress. Please sign in with Google or sign up.");
-    return res.redirect("/login");
-  }
-  res.render("users/createAccount", { tempUser });
-}));
+    return res.render("users/createAccount", { tempUser });
+  })
+);
 
 /**
- * Inline create-account (POST)
- * - Handles both /create-account and /create-account-inline logic in one place
- * - Creates the real DB user via User.register, logs them in, clears session/pending
+ * POST /create-account
+ * - Creates the real User using req.session.tempUser (googleId/email/profilePic)
+ * - Enforces username uniqueness and password rules
+ * - Logs the user in, clears session.tempUser, redirects to /posts
  */
 router.post(
   "/create-account",
   wrapAsync(async (req, res, next) => {
     const { username, password } = req.body;
+    const temp = req.session.tempUser;
 
-    // Prefer pending record if present
-    let pending = null;
-    if (req.session.pendingId) {
-      pending = await PendingUser.findById(req.session.pendingId).lean();
-    }
-
-    const temp = pending || req.session.tempUser;
     if (!temp) {
-      req.flash("error", "No signup in progress. Please sign in with Google or sign up.");
-      return res.redirect("/login");
+      req.flash("error", "Session expired or no Google profile found. Please sign in with Google again.");
+      return res.redirect("/signup");
     }
 
     // Validate username
-    if (!username || username.length < 3) {
+    if (!username || typeof username !== "string" || username.trim().length < 3) {
       req.flash("error", "Username must be at least 3 characters.");
       return res.redirect("/create-account");
     }
+    const cleanUsername = username.trim();
 
-    // Check uniqueness
-    const existingUsername = await User.findOne({ username });
-    if (existingUsername) {
+    // Validate password
+    if (!password || typeof password !== "string" || password.length < 6) {
+      req.flash("error", "Password must be at least 6 characters.");
+      return res.redirect("/create-account");
+    }
+
+    // Ensure username uniqueness
+    const existing = await User.findOne({ username: cleanUsername });
+    if (existing) {
       req.flash("error", "Username already taken. Please choose another.");
       return res.redirect("/create-account");
     }
 
-    // If an account already exists for this email, direct user to login
-    const existingEmail = await User.findOne({ email: temp.email });
-    if (existingEmail) {
-      req.flash("info", "An account with this email already exists. Please log in.");
+    // Enforce email uniqueness (recommended): if an account already exists with this email, prompt to sign in
+    const existingByEmail = await User.findOne({ email: temp.email.toLowerCase().trim() });
+    if (existingByEmail) {
+      req.flash("error", "An account with this email already exists. Try signing in instead.");
       return res.redirect("/login");
     }
 
-    // Prepare user data (prefer pending values)
-    const newUser = new User({
-      username,
-      email: temp.email,
-      googleId: pending?.googleId || temp.googleId || null,
-      profilePic: pending?.profilePic || temp.profilePic || "/images/default-avatar.png",
-      verified: temp.verified === true,
-    });
+    // Build user data from session.tempUser
+    const userData = {
+      username: cleanUsername,
+      email: temp.email.toLowerCase().trim(),
+      googleId: temp.googleId || null,
+      profilePic: temp.profilePic || "/images/default-avatar.png",
+      verified: true,
+    };
 
-    // Choose password: provided or random strong one (Google users can skip)
-    const chosenPassword =
-      password && password.length >= 6 ? password : Math.random().toString(36).slice(2, 12);
-
-    // Register user (passport-local-mongoose handles hashing and metadata)
-    const registeredUser = await User.register(newUser, chosenPassword);
-
-    // Remove pending record if present
-    if (pending && pending._id) {
-      try {
-        await PendingUser.findByIdAndDelete(pending._id);
-      } catch (e) {
-        console.error("⚠️ Could not delete PendingUser after creating User:", e);
+    // Register the user using passport-local-mongoose (handles hashing)
+    let newUser;
+    try {
+      newUser = await User.register(new User(userData), password);
+      console.log("✅ New user created (unified Google-first):", newUser.username, newUser.email);
+    } catch (regErr) {
+      if (regErr && regErr.name === "UserExistsError") {
+        req.flash("error", "Username already exists. Please choose another.");
+        return res.redirect("/create-account");
       }
+      throw regErr;
     }
 
-    // Login and persist session before redirect
-    req.login(registeredUser, (err) => {
-      if (err) return next(err);
+    // Log the new user in, clear session.tempUser, and redirect
+    req.login(newUser, (err) => {
+      if (err) {
+        console.error("❌ Login error after account creation:", err);
+        req.flash("error", "Could not log you in. Try logging in manually.");
+        return res.redirect("/login");
+      }
+      delete req.session.tempUser;
       req.session.save((saveErr) => {
-        if (saveErr) console.error("❌ Session save error:", saveErr);
-        // Clear tempUser and pending pointer
-        delete req.session.tempUser;
-        delete req.session.pendingId;
+        if (saveErr) console.error("❌ Session save error after creating account:", saveErr);
         req.flash("success", "Account created. Welcome to InfoPics!");
         return res.redirect("/posts");
       });

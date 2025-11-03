@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
+      unique: true,
       index: true,
       lowercase: true,
       trim: true,
@@ -35,8 +36,8 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Use email as the authentication field so users log in with email
-userSchema.plugin(passportLocalMongoose, { usernameField: "email" });
+// Use username as the authentication field so users log in with username + password
+userSchema.plugin(passportLocalMongoose, { usernameField: "username" });
 
 // Optional: clean JSON output (remove __v)
 userSchema.set("toJSON", {

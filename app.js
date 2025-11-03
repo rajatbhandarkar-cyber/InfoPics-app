@@ -42,7 +42,9 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride("_method"));
-app.use(express.static(path.join(__dirname, "/public")));
+
+// Serve static assets from /public (ensure public/images/default-avatar.png exists)
+app.use(express.static(path.join(__dirname, "public")));
 
 // ✅ Request Logger
 app.use((req, res, next) => {
@@ -59,9 +61,12 @@ const store = MongoStore.create({
 
 store.on("error", (err) => console.log("❌ Mongo Session Store Error:", err));
 
+// Session cookie settings:
+// - sameSite: 'lax' lets the session cookie survive OAuth redirects in most cases
+// - secure: true only in production (when serving over HTTPS)
 const sessionOptions = {
   store,
-  secret: process.env.SECRET,
+  secret: process.env.SECRET || "thisshouldbeabettersecret",
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -99,7 +104,9 @@ app.use((req, res, next) => {
   res.locals.tempUser = req.session?.tempUser || null;
 
   // provide app base url to views if needed
-  res.locals.APP_BASE_URL = process.env.APP_BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+  const port = process.env.PORT || 3000;
+  const host = process.env.APP_BASE_URL || `http://localhost:${port}`;
+  res.locals.APP_BASE_URL = host;
 
   next();
 });
@@ -112,7 +119,7 @@ app.use("/posts", postRouter);
 app.use("/posts", reviewRouter);
 app.use("/", userRouter);
 
-// ✅ Debug unmatched routes
+// ✅ Debug unmatched routes (log 404s)
 app.use((req, res, next) => {
   res.on("finish", () => {
     if (res.statusCode === 404) {

@@ -2,93 +2,28 @@
 
 <main class="flex-grow-1 d-flex align-items-center justify-content-center">
   <div class="row w-100" style="max-width: 700px;">
-    <h1 class="text-center mb-3">Sign Up on InfoPics</h1>
+    <h2 class="text-center mb-3">Create your InfoPics account</h2>
 
-    <% if (locals.error && error.length > 0) { %>
+    <% if (error && error.length > 0) { %>
       <div class="alert alert-danger text-center"><%= error %></div>
     <% } %>
 
-    <% if (locals.success && success.length > 0) { %>
+    <% if (success && success.length > 0) { %>
       <div class="alert alert-success text-center"><%= success %></div>
     <% } %>
 
-    <div class="col-12">
-      <form action="/signup" method="POST" class="needs-validation" autocomplete="off" novalidate>
-        <div class="mb-3">
-          <label for="newUsername" class="form-label">Username</label>
-          <input
-            name="newUsername"
-            id="newUsername"
-            type="text"
-            class="form-control"
-            autocomplete="off"
-            required
-            value="<%= tempUser ? (tempUser.username || '') : '' %>"
-          />
-          <div class="valid-feedback">Looks good!</div>
-        </div>
+    <div class="col-12 text-center">
+      <p class="mb-4 text-muted">Sign up quickly and securely using your Google account. You'll pick a username and password right after Google sign-in.</p>
 
-        <div class="mb-3">
-          <label for="newEmail" class="form-label">Email</label>
-          <input
-            name="newEmail"
-            id="newEmail"
-            type="email"
-            class="form-control"
-            autocomplete="off"
-            required
-            value="<%= tempUser ? (tempUser.email || '') : '' %>"
-          />
-        </div>
+      <a href="/auth/google" class="btn btn-outline-primary btn-lg w-100 mb-3">
+        <img src="/images/google-logo.svg" alt="Google" style="height:20px; margin-right:8px; vertical-align:middle;" />
+        Continue with Google
+      </a>
 
-        <div class="mb-3">
-          <label for="newPassword" class="form-label">Password</label>
-          <input
-            name="newPassword"
-            id="newPassword"
-            type="password"
-            class="form-control"
-            autocomplete="new-password"
-            required
-          />
-        </div>
-
-        <% if (tempUser && tempUser.source === 'google') { %>
-          <!-- Show clear hint and let user continue creating account after Google -->
-          <div class="mb-3">
-            <small class="text-muted">
-              You started with Google. Complete this form to finish creating your InfoPics account.
-            </small>
-          </div>
-        <% } %>
-
-        <button type="submit" class="btn btn-success w-100">Sign Up</button>
-      </form>
-
-      <div class="text-center mt-3">
-        <a href="/auth/google" class="btn btn-outline-primary w-100 mb-2">Continue with Google</a>
-
-        <% if (tempUser && tempUser.source === 'google') { %>
-          <a href="/create-account" class="btn btn-link">Or choose a username on the Create Account page</a>
-        <% } %>
+      <div class="mt-2">
+        <a href="/login" class="btn btn-link">Already have an account? Sign in</a>
       </div>
     </div>
   </div>
 </main>
 
-<script>
-  // Minimal client-side bootstrap validation, won't block server redirects
-  (function () {
-    'use strict';
-    const forms = document.querySelectorAll('.needs-validation');
-    Array.prototype.slice.call(forms).forEach(function (form) {
-      form.addEventListener('submit', function (event) {
-        if (!form.checkValidity()) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        form.classList.add('was-validated');
-      }, false);
-    });
-  })();
-</script>

@@ -7,7 +7,16 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// Google OAuth strategy
+const pickPicture = (profile) => {
+  return (
+    profile?._json?.picture ||
+    profile?._json?.imageUrl ||
+    (Array.isArray(profile?.photos) && profile.photos[0]?.value) ||
+    "/images/default-avatar.png"
+  );
+};
+
+// Google OAuth strategy (passReqToCallback = true to access req & session)
 passport.use(
   new GoogleStrategy(
     {
@@ -18,44 +27,70 @@ passport.use(
     },
     async (req, accessToken, refreshToken, profile, done) => {
       try {
-        const email = profile?.emails?.[0]?.value || profile._json?.email;
+        const rawEmail = profile?.emails?.[0]?.value || profile?._json?.email;
+        const email = rawEmail ? String(rawEmail).toLowerCase().trim() : null;
         const googleId = profile.id;
+        const picture = pickPicture(profile);
 
         if (!email) {
           console.log("❌ Google profile has no email:", profile);
           return done(new Error("No email in Google profile"), null);
         }
 
-        // 1) If a user exists with this googleId, log them in
+        const buildTempUser = () => ({
+          googleId,
+          email,
+          profilePic: picture,
+          name: profile.displayName || "",
+          source: "google",
+          verified: true,
+        });
+
+        // 1) If an authenticated user explicitly requested attach -> link Google to that user
+        if (req && req.user && req.session && req.session.attachGoogle) {
+          try {
+            req.user.googleId = googleId;
+            req.user.profilePic = picture || req.user.profilePic || "/images/default-avatar.png";
+            req.user.verified = true;
+            await req.user.save();
+
+            // clear attach flag and persist session
+            delete req.session.attachGoogle;
+            if (typeof req.session.save === "function") {
+              await new Promise((resolve, reject) =>
+                req.session.save((err) => (err ? reject(err) : resolve()))
+              );
+            }
+
+            console.log("✅ Attached Google to logged-in user:", req.user.username || req.user.email);
+            return done(null, req.user);
+          } catch (attachErr) {
+            console.error("❌ Error attaching Google to logged-in user:", attachErr);
+            return done(attachErr, null);
+          }
+        }
+
+        // 2) If a user exists already with this googleId and there's no attach intent -> log them in
         const existingByGoogleId = await User.findOne({ googleId });
-        if (existingByGoogleId) {
+        if (existingByGoogleId && !(req && req.session && req.session.attachGoogle)) {
           console.log("✅ Existing user found by googleId:", googleId);
           return done(null, existingByGoogleId);
         }
 
-        // 2) If a user exists with this email but not this googleId,
-        // DO NOT auto-login them. Instead prepare a tempUser for inline onboarding.
-        // This allows multiple accounts to reuse the same Gmail while keeping username unique.
-        const tempUser = {
-          googleId,
-          email,
-          profilePic: profile._json?.picture || "",
-          name: profile.displayName || "",
-          source: "google",
-          verified: true,
-        };
-
+        // 3) Otherwise: persist a minimal tempUser in session for the create-account step
+        const tempUser = buildTempUser();
         if (req && req.session) {
           req.session.tempUser = tempUser;
-          // ensure session persistence before redirecting from auth callback
           if (typeof req.session.save === "function") {
             await new Promise((resolve, reject) =>
               req.session.save((err) => (err ? reject(err) : resolve()))
             );
           }
+          console.log("➡️ Stored tempUser in session for onboarding:", tempUser.email);
           return done(null, false, { tempUser });
         }
 
+        // Fallback return (no session available)
         return done(null, false, { tempUser });
       } catch (err) {
         console.log("❌ Error during Google OAuth:", err);

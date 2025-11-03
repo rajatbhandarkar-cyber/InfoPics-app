@@ -47,6 +47,14 @@
       </form>
     </div>
 
+    <% /* If this is a Google-origin pending/tempUser, surface a clear path to finish account creation */ %>
+    <% if ((typeof pending !== 'undefined' && pending && pending.source === 'google') || (tempUser && tempUser.source === 'google')) { %>
+      <div class="text-center mt-4">
+        <p class="mb-2">You signed in with Google. Pick a username to finish creating your account.</p>
+        <a href="/create-account" class="btn btn-primary w-100">Finish account (choose username)</a>
+      </div>
+    <% } %>
+
     <div class="text-center mt-2 text-muted small">
       If you opened this email on a different device, paste the code here. If you used Google Sign-in, your Google profile picture will be preserved when the account is created.
     </div>

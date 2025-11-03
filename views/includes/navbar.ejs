@@ -43,19 +43,18 @@
     white-space: nowrap;
   }
   #signInPanel {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 8px; /* breathing space */
-  background-color: #fff;
-  border: 1px solid #ddd; /* soft border */
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
-  padding: 1rem;
-  width: 320px;
-  z-index: 1050;
-}
-
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    padding: 1rem;
+    width: 320px;
+    z-index: 1050;
+  }
   #closeSignIn {
     position: absolute;
     top: 10px;
@@ -101,7 +100,7 @@
       <div class="navbar-nav align-items-center position-relative">
         <a href="/posts/new" class="btn search-btn text-white text-decoration-none rounded-pill d-flex align-items-center justify-content-center" style="padding: 0.5rem 3rem;">Share Experience</a>
 
-        <!-- <% if (!currUser) { %>
+        <% if (!currUser) { %>
           <a class="nav-link text-dark fw-bold ms-3" href="#" id="openSignIn">Sign in</a>
 
           <div id="signInPanel" class="d-none">
@@ -137,68 +136,29 @@
             </div>
           </div>
         <% } else { %>
-          <a class="nav-link ms-2" href="/logout"><b>Log out</b></a>
-          <% if (currUser.profilePic) { %>
-            <img src="<%= currUser.profilePic %>" alt="Profile" class="profile-img" />
-          <% } %>
-        <% } %> -->
+          <div class="position-relative">
+            <button class="btn p-0 border-0 bg-transparent" id="openProfilePanel">
+              <img
+                src="<%= (currUser && (currUser.profilePic || currUser.imageUrl || (Array.isArray(currUser.photos) && currUser.photos[0] && currUser.photos[0].value) )) ? (currUser.profilePic || currUser.imageUrl || currUser.photos[0].value) : '/images/default-avatar.png' %>"
+                alt="Profile"
+                class="profile-img"
+                onerror="this.onerror=null; this.src='/images/default-avatar.png';"
+              />
+            </button>
 
-
-        <% if (!currUser) { %>
-           <a class="nav-link text-dark fw-bold ms-3" href="#" id="openSignIn">Sign in</a>
-
-            <div id="signInPanel" class="d-none">
-                <button id="closeSignIn">✕</button>
-                <h5 class="mb-3 text-center mt-4">InfoPics.in</h5>
-              <form action="/login" method="POST">
-                <div class="mb-3">
-                   <label for="username" class="form-label">Username or Gmail</label>
-                   <input type="text" name="username" class="form-control" required />
-                </div>
-                <div class="mb-3">
-                   <label for="password" class="form-label">Password</label>
-                   <input type="password" name="password" class="form-control" required />
-                </div>
-                <div class="form-check mb-2">
-                   <input class="form-check-input" type="checkbox" name="staySignedIn" id="staySignedIn">
-                   <label class="form-check-label" for="staySignedIn">Stay signed in</label>
-                </div>
-                <button type="submit" class="btn btn-success text-white text-decoration-none auth-btn d-flex align-items-center justify-content-center">
-                  Sign in
-                </button>
-              </form>
-
-              <div class="text-center my-3 text-muted">or</div>
-
-              <a href="/auth/google" class="btn btn-outline-dark text-dark text-decoration-none auth-btn d-flex align-items-center justify-content-center gap-2" style="background-color: transparent;">
-                <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" style="width:20px; height:20px;">
-                Continue with Google
+            <div id="profilePanel" class="d-none" style="position: absolute; top: 100%; right: 0; margin-top: 8px; background-color: #fff; border: 1px solid #ddd; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.2); padding: 1rem; width: 320px; z-index: 1050;">
+              <button id="closeProfilePanel" style="position: absolute; top: 10px; right: 15px; font-size: 1.5rem; font-weight: bold; background: none; border: none; color: #333; cursor: pointer;">✕</button>
+              <h5 class="mb-3 text-center mt-4">Welcome</h5>
+              <p class="text-center text-muted mb-2"><%= currUser.email %></p>
+              <a href="/my-posts" class="btn btn-success text-white text-decoration-none auth-btn d-flex align-items-center justify-content-center mb-2">
+                My Posts
               </a>
-
-              <div class="text-center mt-3">
-                <small>New here? <a href="/signup">Create an account</a></small>
-              </div>
+              <a href="/logout" class="btn btn-danger text-white text-decoration-none auth-btn d-flex align-items-center justify-content-center">
+                Log out
+              </a>
             </div>
-          <% } else { %>
-            <div class="position-relative">
-                <button class="btn p-0 border-0 bg-transparent" id="openProfilePanel">
-                  <img src="<%= currUser.profilePic %>" alt="Profile" class="profile-img" />
-                </button>
-
-              <div id="profilePanel" class="d-none" style="position: absolute; top: 100%; right: 0; margin-top: 8px; background-color: #fff; border: 1px solid #ddd; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.2); padding: 1rem; width: 320px; z-index: 1050;">
-                <button id="closeProfilePanel" style="position: absolute; top: 10px; right: 15px; font-size: 1.5rem; font-weight: bold; background: none; border: none; color: #333; cursor: pointer;">✕</button>
-                 <h5 class="mb-3 text-center mt-4">Welcome</h5>
-                <p class="text-center text-muted mb-2"><%= currUser.email %></p>
-                <a href="/my-posts" class="btn btn-success text-white text-decoration-none auth-btn d-flex align-items-center justify-content-center mb-2">
-                   My Posts
-                </a>
-
-                <a href="/logout" class="btn btn-danger text-white text-decoration-none auth-btn d-flex align-items-center justify-content-center">
-                   Log out
-                </a>
-                </div>
-                </div>
-             <% } %>
+          </div>
+        <% } %>
       </div>
     </div>
   </div>
@@ -209,19 +169,19 @@
   const closeSignIn = document.getElementById('closeSignIn');
   const signInPanel = document.getElementById('signInPanel');
 
-  openSignIn.addEventListener('click', (e) => {
-    e.preventDefault();
-    signInPanel.classList.remove('d-none');
-    openSignIn.classList.add('d-none');
-  });
+  if (openSignIn && closeSignIn && signInPanel) {
+    openSignIn.addEventListener('click', (e) => {
+      e.preventDefault();
+      signInPanel.classList.remove('d-none');
+      openSignIn.classList.add('d-none');
+    });
 
-  closeSignIn.addEventListener('click', () => {
-    signInPanel.classList.add('d-none');
-    openSignIn.classList.remove('d-none');
-  });
-</script>
+    closeSignIn.addEventListener('click', () => {
+      signInPanel.classList.add('d-none');
+      openSignIn.classList.remove('d-none');
+    });
+  }
 
-<script>
   const openProfilePanel = document.getElementById('openProfilePanel');
   const closeProfilePanel = document.getElementById('closeProfilePanel');
   const profilePanel = document.getElementById('profilePanel');
@@ -237,4 +197,3 @@
     });
   }
 </script>
-

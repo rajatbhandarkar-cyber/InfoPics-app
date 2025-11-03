@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 const PendingUser = require("../models/pendingUser");
-const { sendVerificationEmail } = require("../utils/sendVerificationEmail");
 const crypto = require("crypto");
 
 /**
@@ -12,17 +11,14 @@ const generateCode = () => Math.floor(100000 + Math.random() * 900000).toString(
 
 /**
  * GET /verify
- * Renders verify page. Prefers email from session.tempUser or from pending record referenced by session.pendingId.
  */
 router.get("/", async (req, res) => {
   try {
     let email = req.session.tempUser?.email;
-    // If we have a pendingId stored, fetch it to display the correct email
     if (req.session.pendingId) {
       const pending = await PendingUser.findById(req.session.pendingId).lean();
       if (pending?.email) email = pending.email;
     }
-
     if (!email) {
       req.flash("error", "Please sign up first.");
       return res.redirect("/signup");
@@ -37,9 +33,6 @@ router.get("/", async (req, res) => {
 
 /**
  * POST /verify/send
- * - If session has pendingId use it; otherwise fall back to session.tempUser.email
- * - Create or refresh a verification code on the PendingUser record (if present),
- *   or set a session code if we only have session.tempUser.
  */
 router.post("/send", async (req, res) => {
   try {
@@ -55,7 +48,6 @@ router.post("/send", async (req, res) => {
     const code = generateCode();
 
     if (pendingId) {
-      // Update code on PendingUser so verification can be done by code
       const pending = await PendingUser.findByIdAndUpdate(
         pendingId,
         { code, updatedAt: new Date() },
@@ -66,7 +58,6 @@ router.post("/send", async (req, res) => {
         return res.redirect("/signup");
       }
     } else {
-      // No pending record: store code in session.tempUser for backward compatibility
       req.session.verificationCode = code;
       req.session.tempUser = {
         ...(req.session.tempUser || {}),
@@ -76,7 +67,11 @@ router.post("/send", async (req, res) => {
     }
 
     try {
-      await sendVerificationEmail(email, code);
+      const { sendVerificationEmail } = require("../utils/sendVerificationEmail");
+      await sendVerificationEmail(email, code, {
+        pendingId: req.session.pendingId,
+        appBaseUrl: process.env.APP_BASE_URL,
+      });
       console.log(`✅ Verification code sent to ${email}`);
       req.flash("success", "Verification code sent! Check your Gmail.");
       return req.session.save(() => res.redirect("/verify"));
@@ -94,62 +89,64 @@ router.post("/send", async (req, res) => {
 
 /**
  * POST /verify/check
- * - Accepts { code } from the form.
- * - Finds PendingUser by session.pendingId or by matching code.
- * - Creates the final User with googleId/profilePic preserved, deletes PendingUser, logs in the user.
- *
- * Note about passwords:
- * - If the pending record came from a manual signup where a password was provided at signup time,
- *   we attempt to use req.session.tempUser.password (if present) as the chosenPassword.
- * - If no usable plaintext password is available, we generate a strong random password for the created account.
- *   (You can adapt this to require the user to set their password during verification.)
  */
 router.post("/check", async (req, res) => {
   const { code } = req.body;
+  const formPendingId = req.body.pendingId || null;
   console.log("DEBUG verify/check — req.body:", req.body);
+
   try {
-    // First try to locate a PendingUser by pendingId (preferred)
+    // Resolve pending by form pendingId -> session.pendingId -> code search
     let pending = null;
-    if (req.session.pendingId) {
-      pending = await PendingUser.findById(req.session.pendingId).lean();
-    }
+    const pendingIdToUse = formPendingId || req.session.pendingId || null;
+    if (pendingIdToUse) pending = await PendingUser.findById(pendingIdToUse).lean();
+    if (!pending && code) pending = await PendingUser.findOne({ code }).sort({ createdAt: -1 }).lean();
 
-    // If not found yet, try to find by code (search recent pending records with that code)
-    if (!pending) {
-      pending = await PendingUser.findOne({ code }).sort({ createdAt: -1 }).lean();
-    }
-
-    // If still no pending, maybe the flow used session.tempUser with code in session
     const sessionCode = req.session.tempUser?.verificationCode || req.session.verificationCode;
     const temp = req.session.tempUser;
 
-    // Validate presence of a verification source
     if (!pending && (!temp || !temp.email || !sessionCode)) {
       req.flash("error", "Session expired. Please sign up again.");
       return res.redirect("/signup");
     }
 
-    // If pending was found, validate code matches (if code provided)
+    // Validate the verification code
     if (pending) {
       if (!code || String(code).trim() !== String(pending.code).trim()) {
         req.flash("error", "Incorrect verification code.");
         return res.redirect("/verify");
       }
     } else {
-      // No pending: validate session code
       if (!code || String(code).trim() !== String(sessionCode).trim()) {
         req.flash("error", "Incorrect verification code.");
         return res.redirect("/verify");
       }
     }
 
-    // Determine canonical username to register and ensure uniqueness
+    // If this pending record came from a Google-first flow, redirect to /create-account
+    // so user can choose a username (preserve pending pointer & temp preview)
+    if (pending && pending.source === "google") {
+      console.log("INFO verify/check — google-origin pending; redirecting to create-account:", pending._id);
+      req.session.pendingId = String(pending._id);
+      req.session.tempUser = {
+        username: pending.username || "",
+        email: pending.email,
+        profilePic: pending.profilePic,
+        googleId: pending.googleId,
+        source: "google",
+        verified: true,
+      };
+      return req.session.save(() => res.redirect("/create-account"));
+    }
+
+    // Determine canonical username to register (manual signup path)
     const usernameToUse = (pending?.username || temp?.username || "").trim();
     if (!usernameToUse || usernameToUse.length < 3) {
       req.flash("error", "Username missing or too short. Please provide a username.");
       return res.redirect("/signup");
     }
 
+    // Only username must be unique; allow duplicate emails
     const existingUser = await User.findOne({ username: usernameToUse });
     if (existingUser) {
       req.flash("error", "Username already taken. Please choose another username.");
@@ -171,11 +168,21 @@ router.post("/check", async (req, res) => {
     const chosenPassword =
       (temp && temp.password && temp.password.length >= 6) ? temp.password : crypto.randomBytes(12).toString("base64");
 
-    // Register the final user
-    const user = await User.register(new User(userData), chosenPassword);
-    console.log("✅ New user created:", user.username, user.email);
+    // Attempt registration with safe error handling
+    let user;
+    try {
+      user = await User.register(new User(userData), chosenPassword);
+      console.log("✅ New user created:", user.username, user.email);
+    } catch (regErr) {
+      if (regErr && regErr.name === "UserExistsError") {
+        console.warn("⚠️ Registration failed — conflict:", regErr);
+        req.flash("error", "An account with that username already exists. Please choose a different username.");
+        return res.redirect("/signup");
+      }
+      throw regErr;
+    }
 
-    // Clean up pending record if it exists
+    // Delete pending document if present
     if (pending && pending._id) {
       try {
         await PendingUser.findByIdAndDelete(pending._id);
@@ -184,7 +191,7 @@ router.post("/check", async (req, res) => {
       }
     }
 
-    // Log the newly created user in and persist session
+    // Log in and persist session
     req.login(user, (loginErr) => {
       console.log("DEBUG req.login callback — loginErr:", loginErr);
       if (loginErr) {
@@ -200,7 +207,6 @@ router.post("/check", async (req, res) => {
           return res.redirect("/login");
         }
 
-        // Clean up temp session data and pending pointer
         delete req.session.verificationCode;
         delete req.session.tempUser;
         delete req.session.pendingId;
@@ -208,8 +214,6 @@ router.post("/check", async (req, res) => {
         req.flash("success", "Email verified! Welcome to InfoPics.");
         return res.redirect("/posts");
       });
-
-      console.log("DEBUG session.passport after save:", req.session.passport);
     });
   } catch (err) {
     console.error("❌ Verification/process failed:", err);
