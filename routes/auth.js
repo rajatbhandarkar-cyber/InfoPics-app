@@ -2,7 +2,25 @@ const express = require("express");
 const passport = require("passport");
 const router = express.Router();
 
-// Start Google OAuth (unified flow: OAuth first)
+const normalizeTemp = (profile) => {
+  if (!profile) return null;
+  // profile may come from Passport's profile object or earlier temp shapes
+  return {
+    googleId: profile.googleId || profile.id || null,
+    email: (profile.email || profile.emails?.[0]?.value || profile._json?.email || "").toLowerCase().trim(),
+    profilePic:
+      profile.profilePic ||
+      profile.picture ||
+      profile.photos?.[0]?.value ||
+      profile._json?.picture ||
+      "/images/default-avatar.png",
+    name: profile.name || profile.displayName || (profile._json && profile._json.name) || "",
+    source: "google",
+    verified: true,
+  };
+};
+
+// Start Google OAuth (unified flow)
 router.get(
   "/google",
   passport.authenticate("google", {
@@ -35,38 +53,33 @@ router.get("/google/callback", (req, res, next) => {
       });
     }
 
-    // Case B — new Google onboarding: strategy should provide tempUser (info.tempUser) and/or session.tempUser
+    // Case B — new Google onboarding: prefer session.tempUser, then info.tempUser, then passport profile
     const authTemp = info?.tempUser;
     const sessionTemp = req.session?.tempUser;
-    const sourceTemp = sessionTemp || authTemp;
+    const profileFromPassport = req.user || info?.profile || info?.rawProfile || null;
 
-    if (!sourceTemp) {
+    const source = sessionTemp || authTemp || profileFromPassport;
+
+    if (!source) {
       console.error("❌ Google auth returned no user and no tempUser");
       req.flash("error", "Authentication failed. Try signing in with Google again.");
       return res.redirect("/signup");
     }
 
-    // Ensure session.tempUser is populated so /create-account can render the preview
+    // Normalize and store in session
     try {
-      req.session.tempUser = {
-        googleId: sourceTemp.googleId || sourceTemp.id || null,
-        email: (sourceTemp.email || "").toLowerCase().trim(),
-        profilePic: sourceTemp.profilePic || sourceTemp.picture || "/images/default-avatar.png",
-        name: sourceTemp.name || "",
-        source: "google",
-        verified: true,
-      };
+      req.session.tempUser = normalizeTemp(source);
 
-      // Clear any attach flags if present
-      if (req.session.attachGoogle) delete req.session.attachGoogle;
-      if (req.session.pendingSignup) delete req.session.pendingSignup;
+      // Cleanup any legacy flags
+      delete req.session.attachGoogle;
+      delete req.session.pendingSignup;
 
-      console.log("AFTER GOOGLE CALLBACK tempUser (session):", JSON.stringify(req.session.tempUser));
+      console.log("AFTER GOOGLE CALLBACK tempUser (session):", req.session.tempUser);
 
-      // Persist session then redirect to create-account where user picks username/password
+      // Persist session then redirect to signup (page will render username/password form)
       return req.session.save((saveErr) => {
         if (saveErr) console.error("❌ Session save error after storing tempUser:", saveErr);
-        return res.redirect("/create-account");
+        return res.redirect("/signup");
       });
     } catch (e) {
       console.error("❌ Error handling Google callback onboarding:", e);

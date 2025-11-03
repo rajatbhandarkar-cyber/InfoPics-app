@@ -1,7 +1,7 @@
 <% layout("/layouts/boilerplate") %>
 
 <main class="flex-grow-1 d-flex align-items-center justify-content-center">
-  <div class="row w-100" style="max-width: 700px;">
+  <div class="row w-100" style="max-width: 520px;">
     <h2 class="text-center mb-3">Create your InfoPics account</h2>
 
     <% if (error && error.length > 0) { %>
@@ -13,16 +13,42 @@
     <% } %>
 
     <div class="col-12 text-center">
-      <p class="mb-4 text-muted">Sign up quickly and securely using your Google account. You'll pick a username and password right after Google sign-in.</p>
+      <% if (!tempUser) { %>
+        <p class="mb-4 text-muted">Sign up quickly and securely using your Google account. You'll pick a username and password right after Google sign-in.</p>
 
-      <a href="/auth/google" class="btn btn-outline-primary btn-lg w-100 mb-3">
-        <img src="/images/google-logo.svg" alt="Google" style="height:20px; margin-right:8px; vertical-align:middle;" />
-        Continue with Google
-      </a>
+        <a href="/auth/google" class="btn btn-outline-primary btn-lg w-100 mb-3" id="googleBtn">
+          <img src="/images/google-logo.svg" alt="Google" style="height:20px; margin-right:8px; vertical-align:middle;" />
+          Continue with Google
+        </a>
 
-      <div class="mt-2">
-        <a href="/login" class="btn btn-link">Already have an account? Sign in</a>
-      </div>
+        <div class="mt-2">
+          <a href="/login" class="btn btn-link">Already have an account? Sign in</a>
+        </div>
+      <% } else { %>
+        <!-- tempUser exists: show preview and username/password form -->
+        <div class="mb-3 text-center">
+          <img src="<%= tempUser.profilePic || '/images/default-avatar.png' %>" alt="Avatar" style="width:72px; height:72px; border-radius:50%; object-fit:cover;" onerror="this.onerror=null;this.src='/images/default-avatar.png'">
+          <p class="mt-2 mb-1"><strong><%= tempUser.email %></strong></p>
+          <p class="text-muted small mb-3">Complete signup by choosing a username and password</p>
+        </div>
+
+        <form action="/create-account" method="POST" class="text-start">
+          <div class="mb-3">
+            <label for="username" class="form-label">Choose a username</label>
+            <input id="username" name="username" required minlength="3" class="form-control" placeholder="username (min 3 characters)" />
+          </div>
+
+          <div class="mb-3">
+            <label for="password" class="form-label">Create a password</label>
+            <input id="password" name="password" type="password" required minlength="6" class="form-control" placeholder="password (min 6 characters)" />
+          </div>
+
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary btn-lg">Sign in and Continue</button>
+            <a href="/logout" class="btn btn-link text-muted">Cancel</a>
+          </div>
+        </form>
+      <% } %>
     </div>
   </div>
 </main>

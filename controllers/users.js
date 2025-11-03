@@ -1,5 +1,4 @@
 const User = require("../models/user");
-const crypto = require("crypto");
 
 /**
  * Helpers
@@ -9,7 +8,7 @@ const normalizeTemp = (temp) => {
   return {
     googleId: temp.googleId || temp.id || null,
     email: (temp.email || "").toLowerCase().trim(),
-    profilePic: temp.profilePic || temp.imageUrl || (temp.picture || "/images/default-avatar.png"),
+    profilePic: temp.profilePic || temp.imageUrl || temp.picture || "/images/default-avatar.png",
     name: temp.name || temp.displayName || "",
     source: temp.source || "google",
     verified: temp.verified === true,
@@ -18,37 +17,36 @@ const normalizeTemp = (temp) => {
 
 /**
  * Render signup page
- * (Unified flow: user starts with Continue with Google which sets req.session.tempUser)
+ * - Show CTA when no tempUser, show username/password form when tempUser exists
  */
 module.exports.renderSignupForm = (req, res) => {
-  const tempUser = normalizeTemp(req.session.tempUser) || null;
-  res.render("users/signup.ejs", { tempUser });
+  const tempUser = normalizeTemp(req.session?.tempUser) || null;
+  return res.render("users/signup", { tempUser });
 };
 
 /**
  * Create-account page (GET)
- * - Requires req.session.tempUser to be present (user arrived here after Google OAuth)
- * - Shows preview (email + profilePic) and asks for username + password
+ * - If tempUser exists, render the same signup view so the user sees the username/password form.
+ * - Otherwise redirect to /signup to begin the Google flow.
  */
 module.exports.renderCreateAccount = (req, res) => {
-  const tempUser = normalizeTemp(req.session.tempUser);
+  const tempUser = normalizeTemp(req.session?.tempUser);
   if (!tempUser) {
-    req.flash("error", "Please sign in with Google to continue.");
+    req.flash("info", "Please sign in with Google to continue.");
     return res.redirect("/signup");
   }
-  return res.render("users/createAccount.ejs", { tempUser });
+  return res.render("users/signup", { tempUser });
 };
 
 /**
  * Create-account (POST)
- * - Validates username/password
- * - Ensures username is unique and (optionally) email is unique
- * - Registers the User using passport-local-mongoose, including googleId/profilePic from session.tempUser
- * - Logs the user in, clears session.tempUser, redirects to /posts
+ * - Reads req.session.tempUser, validates username/password,
+ * - Registers the user (passport-local-mongoose), logs them in,
+ * - Clears session.tempUser, persists session, redirects to /posts.
  */
 module.exports.createAccount = async (req, res, next) => {
   try {
-    const tempRaw = req.session.tempUser;
+    const tempRaw = req.session?.tempUser;
     const temp = normalizeTemp(tempRaw);
     if (!temp) {
       req.flash("error", "Session expired or no Google profile found. Please sign in with Google again.");
@@ -57,34 +55,34 @@ module.exports.createAccount = async (req, res, next) => {
 
     const { username, password } = req.body;
 
-    // Validate username
+    // username validation
     if (!username || typeof username !== "string" || username.trim().length < 3) {
       req.flash("error", "Username must be at least 3 characters.");
-      return res.redirect("/create-account");
+      return res.redirect("/signup");
     }
     const cleanUsername = username.trim();
 
-    // Validate password
+    // password validation
     if (!password || typeof password !== "string" || password.length < 6) {
       req.flash("error", "Password must be at least 6 characters.");
-      return res.redirect("/create-account");
+      return res.redirect("/signup");
     }
 
-    // Ensure username uniqueness
+    // unique username
     const existingUser = await User.findOne({ username: cleanUsername });
     if (existingUser) {
       req.flash("error", "Username already taken. Please choose another.");
-      return res.redirect("/create-account");
+      return res.redirect("/signup");
     }
 
-    // Optional: enforce email uniqueness (recommended). If you prefer allowing duplicates, remove this block.
+    // optional: prevent duplicate emails
     const existingByEmail = await User.findOne({ email: temp.email });
     if (existingByEmail) {
       req.flash("error", "An account with this email already exists. Try signing in instead.");
       return res.redirect("/login");
     }
 
-    // Build user data from session.tempUser
+    // build user payload
     const userData = {
       username: cleanUsername,
       email: temp.email,
@@ -93,27 +91,26 @@ module.exports.createAccount = async (req, res, next) => {
       verified: true,
     };
 
-    // Register user (passport-local-mongoose handles hashing and saving)
+    // register user (passport-local-mongoose)
     let newUser;
     try {
       newUser = await User.register(new User(userData), password);
-      console.log("✅ New user created (Google-first):", newUser.username, newUser.email);
+      console.log("✅ New user created:", newUser.username, newUser.email);
     } catch (regErr) {
       if (regErr && regErr.name === "UserExistsError") {
         req.flash("error", "Username already exists. Please choose another.");
-        return res.redirect("/create-account");
+        return res.redirect("/signup");
       }
       throw regErr;
     }
 
-    // Log the new user in, clear session.tempUser, save session, redirect
+    // login the new user, clear tempUser and persist session
     req.login(newUser, (err) => {
       if (err) {
         console.error("❌ Login error after account creation:", err);
-        req.flash("error", "Could not log you in. Try logging in manually.");
+        req.flash("error", "Could not log you in automatically. Please sign in.");
         return res.redirect("/login");
       }
-      // Clear tempUser and persist session
       delete req.session.tempUser;
       req.session.save((saveErr) => {
         if (saveErr) console.error("❌ Session save error after creating account:", saveErr);
@@ -124,12 +121,12 @@ module.exports.createAccount = async (req, res, next) => {
   } catch (err) {
     console.error("❌ createAccount error:", err);
     req.flash("error", err.message || "Could not create account. Try again.");
-    return res.redirect("/create-account");
+    return res.redirect("/signup");
   }
 };
 
 /**
- * Local login (passport-local handled via route middleware)
+ * Local login handler (used after passport-local authentication)
  */
 module.exports.login = async (req, res) => {
   req.flash("success", "Welcome back to InfoPics!");
@@ -147,3 +144,5 @@ module.exports.logout = (req, res, next) => {
     return res.redirect("/posts");
   });
 };
+
+module.exports.normalizeTemp = normalizeTemp;

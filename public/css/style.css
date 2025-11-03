@@ -589,7 +589,7 @@ body.modal-open {
   display: none;
   position: absolute;
   right: 0;
-  top: 40px;
+  top: calc(100% + 8px); /* 8px gap below the trigger */
   background-color: white;
   border: 1px solid #ddd;
   padding: 1rem;
@@ -651,8 +651,3 @@ body.modal-open {
   align-items: center;
   justify-content: center;
 }
-
-
-
-
-

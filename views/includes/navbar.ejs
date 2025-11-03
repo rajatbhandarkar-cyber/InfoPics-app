@@ -42,11 +42,20 @@
     max-width: 280px;
     white-space: nowrap;
   }
-  #signInPanel {
+
+  /* Add horizontal gap between Share Experience and profile/auth controls */
+  .navbar-nav.align-items-center {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* horizontal gap you wanted */
+  }
+
+  /* Panels should sit 8px below the navbar trigger (vertical gap) */
+  #signInPanel,
+  #profilePanel {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 10px); /* 8px vertical gap from the trigger */
     right: 0;
-    margin-top: 8px;
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 12px;
@@ -55,7 +64,10 @@
     width: 320px;
     z-index: 1050;
   }
-  #closeSignIn {
+
+  /* Close buttons: stable positioning, no extra margin */
+  #closeSignIn,
+  #closeProfilePanel {
     position: absolute;
     top: 10px;
     right: 15px;
@@ -65,8 +77,10 @@
     border: none;
     color: #333;
     cursor: pointer;
+    margin-top: 0;
   }
 </style>
+
 
 <nav class="navbar navbar-expand-md bg-body-light border-bottom position-relative">
   <div class="container-fluid">
@@ -88,7 +102,8 @@
       <!-- Center: Search bar -->
       <div class="navbar-nav mx-auto">
         <form class="d-flex align-items-center position-relative" role="search" action="/posts/search" method="GET">
-          <img src="/images/profile.jpg.jpg" alt="Profile" class="search-img" />
+          <!-- Use canonical filename; onerror falls back to default avatar -->
+          <img src="/images/profile.jpg.jpg" alt="Profile" class="search-img" onerror="this.onerror=null; this.src='/images/default-avatar.png';" />
           <input name="q" class="form-control me-2 search-inp ps-5" type="search" placeholder="Search Locations" />
           <button class="btn search-btn" type="submit">
             <i class="fa-solid fa-magnifying-glass"></i>Search
@@ -106,6 +121,8 @@
           <div id="signInPanel" class="d-none">
             <button id="closeSignIn">✕</button>
             <h5 class="mb-3 text-center mt-4">InfoPics.in</h5>
+
+            <!-- local login kept for compatibility, but account creation removed -->
             <form action="/login" method="POST">
               <div class="mb-3">
                 <label for="username" class="form-label">Username or Gmail</label>
@@ -126,13 +143,15 @@
 
             <div class="text-center my-3 text-muted">or</div>
 
+            <!-- Keep Google-only signup path -->
             <a href="/auth/google" class="btn btn-outline-dark text-dark text-decoration-none auth-btn d-flex align-items-center justify-content-center gap-2" style="background-color: transparent;">
               <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" style="width:20px; height:20px;">
               Continue with Google
             </a>
 
+            <!-- Removed Create an account link; explain Google-only signup -->
             <div class="text-center mt-3">
-              <small>New here? <a href="/signup">Create an account</a></small>
+              <small>New accounts are created with Google only</small>
             </div>
           </div>
         <% } else { %>
@@ -146,16 +165,16 @@
               />
             </button>
 
-            <div id="profilePanel" class="d-none" style="position: absolute; top: 100%; right: 0; margin-top: 8px; background-color: #fff; border: 1px solid #ddd; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.2); padding: 1rem; width: 320px; z-index: 1050;">
-              <button id="closeProfilePanel" style="position: absolute; top: 10px; right: 15px; font-size: 1.5rem; font-weight: bold; background: none; border: none; color: #333; cursor: pointer;">✕</button>
-              <h5 class="mb-3 text-center mt-4">Welcome</h5>
-              <p class="text-center text-muted mb-2"><%= currUser.email %></p>
-              <a href="/my-posts" class="btn btn-success text-white text-decoration-none auth-btn d-flex align-items-center justify-content-center mb-2">
-                My Posts
-              </a>
-              <a href="/logout" class="btn btn-danger text-white text-decoration-none auth-btn d-flex align-items-center justify-content-center">
-                Log out
-              </a>
+            <div id="profilePanel" class="d-none">
+                <button id="closeProfilePanel">✕</button>
+                <h5 class="mb-3 text-center mt-4">Welcome</h5>
+                <p class="text-center text-muted mb-2"><%= currUser.email %></p>
+                <a href="/my-posts" class="btn btn-success text-white text-decoration-none auth-btn d-flex align-items-center justify-content-center mb-2">
+                   My Posts
+                </a>
+                <a href="/logout" class="btn btn-danger text-white text-decoration-none auth-btn d-flex align-items-center justify-content-center">
+                   Log out
+                </a>
             </div>
           </div>
         <% } %>
