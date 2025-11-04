@@ -24,6 +24,7 @@ const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 const authRouter = require("./routes/auth.js");
 const verifyRouter = require("./routes/verify.js");
+const avatarRouter = require("./routes/avatar");
 
 // ✅ Database Connection
 const dbUrl = process.env.ATLASDB_URL.replace("infopics", "InfoPics");
@@ -115,6 +116,7 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => res.redirect("/posts"));
 app.use("/auth", authRouter);
 app.use("/verify", verifyRouter);
+app.use("/avatar", avatarRouter);
 app.use("/posts", postRouter);
 app.use("/posts", reviewRouter);
 app.use("/", userRouter);

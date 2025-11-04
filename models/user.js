@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema(
     verificationCode: String,
     profilePic: {
       type: String,
-      default: "/images/default-avatar.png",
+      default: "/images/profile.jpg.jpg",
     },
     googleId: {
       type: String,

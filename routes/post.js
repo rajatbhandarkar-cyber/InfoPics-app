@@ -37,7 +37,7 @@ router.get(
       }
 
       // If your Post schema stores the author's username as `authorUsername` (string)
-      const posts = await Post.find({ authorUsername: username })
+      const posts = await Post.find({ ownerUsername: username })
         .sort({ createdAt: -1 })
         .lean();
 

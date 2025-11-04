@@ -46,7 +46,7 @@ passport.use(
           verified: true,
         });
 
-        // 1) If an authenticated user explicitly requested attach -> link Google to that user
+        // 1) Attach flow: authenticated user explicitly requested attach -> link Google to that user
         if (req && req.user && req.session && req.session.attachGoogle) {
           try {
             req.user.googleId = googleId;
@@ -54,7 +54,6 @@ passport.use(
             req.user.verified = true;
             await req.user.save();
 
-            // clear attach flag and persist session
             delete req.session.attachGoogle;
             if (typeof req.session.save === "function") {
               await new Promise((resolve, reject) =>
@@ -70,28 +69,47 @@ passport.use(
           }
         }
 
-        // 2) If a user exists already with this googleId and there's no attach intent -> log them in
+        // 2) If a user exists with this googleId -> log them in
         const existingByGoogleId = await User.findOne({ googleId });
-        if (existingByGoogleId && !(req && req.session && req.session.attachGoogle)) {
+        if (existingByGoogleId) {
           console.log("✅ Existing user found by googleId:", googleId);
           return done(null, existingByGoogleId);
         }
 
-        // 3) Otherwise: persist a minimal tempUser in session for the create-account step
-        const tempUser = buildTempUser();
-        if (req && req.session) {
-          req.session.tempUser = tempUser;
-          if (typeof req.session.save === "function") {
-            await new Promise((resolve, reject) =>
-              req.session.save((err) => (err ? reject(err) : resolve()))
-            );
-          }
-          console.log("➡️ Stored tempUser in session for onboarding:", tempUser.email);
-          return done(null, false, { tempUser });
+        // 3) Try to find an existing user by email and link the googleId, or create a new user
+        const existingByEmail = await User.findOne({ email });
+
+        if (existingByEmail) {
+          existingByEmail.googleId = existingByEmail.googleId || googleId;
+          existingByEmail.profilePic = existingByEmail.profilePic || picture || "/images/default-avatar.png";
+          existingByEmail.verified = existingByEmail.verified || true;
+          await existingByEmail.save();
+          console.log("✅ Linked Google to existing user by email:", email);
+          return done(null, existingByEmail);
         }
 
-        // Fallback return (no session available)
-        return done(null, false, { tempUser });
+        // 4) No user exists by googleId or email — create one now so the user is logged in immediately.
+        const baseUsername = String(email.split("@")[0]).replace(/[^a-z0-9_-]/gi, "").slice(0, 20) || `user${Date.now()}`;
+        let finalUsername = baseUsername;
+        let suffix = 0;
+        while (await User.exists({ username: finalUsername })) {
+          suffix += 1;
+          finalUsername = `${baseUsername}${suffix}`;
+        }
+
+        const newUser = new User({
+          email,
+          username: finalUsername,
+          googleId,
+          profilePic: picture || "/images/default-avatar.png",
+          verified: true,
+        });
+
+        await newUser.save();
+        console.log("✅ Created new user from Google profile:", newUser.username);
+        return done(null, newUser);
+
+        // NOTE: tempUser fallback removed because we persist/link/create above.
       } catch (err) {
         console.log("❌ Error during Google OAuth:", err);
         return done(err, null);

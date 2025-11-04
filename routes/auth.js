@@ -4,7 +4,6 @@ const router = express.Router();
 
 const normalizeTemp = (profile) => {
   if (!profile) return null;
-  // profile may come from Passport's profile object or earlier temp shapes
   return {
     googleId: profile.googleId || profile.id || null,
     email: (profile.email || profile.emails?.[0]?.value || profile._json?.email || "").toLowerCase().trim(),
@@ -38,49 +37,53 @@ router.get("/google/callback", (req, res, next) => {
       return res.redirect("/signup");
     }
 
-    // Case A — existing user found by googleId: log them in and redirect to posts
+    // If Passport returned a User object, log them in and create a session
     if (user) {
       return req.login(user, (loginErr) => {
         if (loginErr) {
-          console.error("❌ Login error for existing Google user:", loginErr);
+          console.error("❌ Login error for Google user:", loginErr);
           req.flash("error", "Login failed. Please try again.");
           return res.redirect("/login");
         }
+        // Persist session then redirect
         return req.session.save((saveErr) => {
-          if (saveErr) console.error("❌ Session save error:", saveErr);
+          if (saveErr) console.error("❌ Session save error after login:", saveErr);
+          console.log("✅ Google login successful for user:", user.username || user.email);
           return res.redirect("/posts");
         });
       });
     }
 
-    // Case B — new Google onboarding: prefer session.tempUser, then info.tempUser, then passport profile
-    const authTemp = info?.tempUser;
-    const sessionTemp = req.session?.tempUser;
-    const profileFromPassport = req.user || info?.profile || info?.rawProfile || null;
+    // If no user was returned by Passport, try to extract profile/temp info for onboarding
+    // Prefer existing session.tempUser, then info.tempUser, then info.profile or req.user shapes
+    const sessionTemp = req.session?.tempUser || null;
+    const infoTemp = info?.tempUser || null;
+    const passportProfile = info?.profile || info?.rawProfile || req.user || null;
 
-    const source = sessionTemp || authTemp || profileFromPassport;
+    const source = sessionTemp || infoTemp || passportProfile;
 
     if (!source) {
-      console.error("❌ Google auth returned no user and no tempUser");
+      console.error("❌ Google auth returned no user and no profile/tempUser");
       req.flash("error", "Authentication failed. Try signing in with Google again.");
       return res.redirect("/signup");
     }
 
-    // Normalize and store in session
+    // Normalize and store in session, then redirect to onboarding
     try {
       req.session.tempUser = normalizeTemp(source);
 
-      // Cleanup any legacy flags
+      // cleanup legacy flags
       delete req.session.attachGoogle;
       delete req.session.pendingSignup;
 
-      console.log("AFTER GOOGLE CALLBACK tempUser (session):", req.session.tempUser);
+      if (typeof req.session.save === "function") {
+        await new Promise((resolve, reject) =>
+          req.session.save((err) => (err ? reject(err) : resolve()))
+        );
+      }
 
-      // Persist session then redirect to signup (page will render username/password form)
-      return req.session.save((saveErr) => {
-        if (saveErr) console.error("❌ Session save error after storing tempUser:", saveErr);
-        return res.redirect("/signup");
-      });
+      console.log("➡️ Stored tempUser in session for onboarding:", req.session.tempUser.email);
+      return res.redirect("/signup");
     } catch (e) {
       console.error("❌ Error handling Google callback onboarding:", e);
       req.flash("error", "Could not continue signup. Please try again.");

@@ -103,7 +103,7 @@
       <div class="navbar-nav mx-auto">
         <form class="d-flex align-items-center position-relative" role="search" action="/posts/search" method="GET">
           <!-- Use canonical filename; onerror falls back to default avatar -->
-          <img src="/images/profile.jpg.jpg" alt="Profile" class="search-img" onerror="this.onerror=null; this.src='/images/default-avatar.png';" />
+          <img src="/images/profile.jpg.jpg" alt="Profile" class="search-img" onerror="this.onerror=null; this.src='/images/profile.jpg.jpg';" />
           <input name="q" class="form-control me-2 search-inp ps-5" type="search" placeholder="Search Locations" />
           <button class="btn search-btn" type="submit">
             <i class="fa-solid fa-magnifying-glass"></i>Search
@@ -158,10 +158,10 @@
           <div class="position-relative">
             <button class="btn p-0 border-0 bg-transparent" id="openProfilePanel">
               <img
-                src="<%= (currUser && (currUser.profilePic || currUser.imageUrl || (Array.isArray(currUser.photos) && currUser.photos[0] && currUser.photos[0].value) )) ? (currUser.profilePic || currUser.imageUrl || currUser.photos[0].value) : '/images/default-avatar.png' %>"
-                alt="Profile"
-                class="profile-img"
-                onerror="this.onerror=null; this.src='/images/default-avatar.png';"
+                 src="<%= currUser ? `/avatar/${currUser._id}` : (tempUser?.profilePic || '/images/profile.jpg.jpg') %>"
+                 alt="Profile"
+                 class="profile-img"
+                 onerror="this.onerror=null; this.src='/images/default-avatar.png';"
               />
             </button>
 
