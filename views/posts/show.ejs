@@ -43,33 +43,33 @@
 
   <!-- Share Section -->
   <div class="row mb-4">
-    <div class="col-md-8 offset-md-2">
-      <hr />
-      <h5>Share your post:</h5>
-      <div class="d-flex flex-wrap gap-3 mt-3">
-        <a class="btn btn-sm btn-dark" target="_blank"
-          href="https://www.facebook.com/sharer/sharer.php?u=https://infopics.in/posts/<%= post._id %>">
-          <i class="fab fa-facebook-f me-1"></i> Facebook
-        </a>
-        <a class="btn btn-sm btn-dark text-white" target="_blank"
-          href="https://twitter.com/intent/tweet?url=https://infopics.in/posts/<%= post._id %>&text=<%= encodeURIComponent(post.title) %>">
-          <i class="fab fa-twitter me-1"></i> Twitter
-        </a>
-        <a class="btn btn-sm btn-dark" target="_blank"
-          href="https://wa.me/?text=https://infopics.in/posts/<%= post._id %>">
-          <i class="fab fa-whatsapp me-1"></i> WhatsApp
-        </a>
-        <a class="btn btn-sm btn-dark" target="_blank"
-          href="https://www.instagram.com/" 
-          onclick="alert('Instagram doesn’t support direct link sharing. Copy the link and paste it in your story or bio.')">
-          <i class="fab fa-instagram me-1"></i> Instagram
-        </a>
-        <a class="btn btn-sm btn-dark" target="_blank"
-          href="https://www.linkedin.com/sharing/share-offsite/?url=https://infopics.in/posts/<%= post._id %>">
-          <i class="fab fa-linkedin-in me-1"></i> LinkedIn
-        </a>
-      </div>
+  <div class="col-md-8 offset-md-2">
+    <hr />
+    <h5>Share your post:</h5>
+    <div class="d-flex flex-wrap gap-3 mt-3">
+      <a class="social-icon" target="_blank"
+        href="https://www.facebook.com/sharer/sharer.php?u=https://infopics.in/posts/<%= post._id %>">
+        <i class="fab fa-facebook-f"></i>
+      </a>
+      <a class="social-icon" target="_blank"
+        href="https://twitter.com/intent/tweet?url=https://infopics.in/posts/<%= post._id %>&text=<%= encodeURIComponent(post.title) %>">
+        <i class="fab fa-twitter"></i>
+      </a>
+      <a class="social-icon" target="_blank"
+        href="https://wa.me/?text=https://infopics.in/posts/<%= post._id %>">
+        <i class="fab fa-whatsapp"></i>
+      </a>
+      <a class="social-icon" target="_blank"
+        href="https://www.instagram.com/"
+        onclick="alert('Instagram doesn’t support direct link sharing. Copy the link and paste it in your story or bio.')">
+        <i class="fab fa-instagram"></i>
+      </a>
+      <a class="social-icon" target="_blank"
+        href="https://www.linkedin.com/sharing/share-offsite/?url=https://infopics.in/posts/<%= post._id %>">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
     </div>
+  </div>
   </div>
 
   <!-- Comment Section -->

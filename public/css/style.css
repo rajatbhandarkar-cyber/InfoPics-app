@@ -651,3 +651,28 @@ body.modal-open {
   align-items: center;
   justify-content: center;
 }
+
+.social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #eee;
+  font-size: 1.2rem;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+/* Brand colors */
+.social-icon i.fa-facebook-f { color: #1877F2; }     /* Facebook blue */
+.social-icon i.fa-twitter { color: #1DA1F2; }         /* Twitter blue */
+.social-icon i.fa-whatsapp { color: #25D366; }        /* WhatsApp green */
+.social-icon i.fa-instagram { color: #E1306C; }       /* Instagram pink */
+.social-icon i.fa-linkedin-in { color: #0077B5; }      /* LinkedIn blue */
+
+.social-icon:hover {
+  transform: scale(1.05);
+  background-color: #eee; /* stays grey */
+}

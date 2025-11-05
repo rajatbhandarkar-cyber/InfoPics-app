@@ -3,6 +3,8 @@ const router = express.Router();
 const passport = require("passport");
 const wrapAsync = require("../utils/wrapAsync");
 const userController = require("../controllers/users.js");
+const User = require("../models/user");
+
 
 /**
  * GET /signup
@@ -75,5 +77,16 @@ router.get("/create-account", (req, res) => {
   }
   return res.redirect("/signup");
 });
+
+router.post("/admin/set-password", async (req, res) => {
+  const { username, password } = req.body;
+  const user = await User.findOne({ username });
+  if (!user) return res.status(404).send("User not found");
+
+  await user.setPassword(password);
+  await user.save();
+  res.send("✅ Password set successfully");
+});
+
 
 module.exports = router;
