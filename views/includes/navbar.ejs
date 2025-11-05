@@ -42,19 +42,10 @@
     max-width: 280px;
     white-space: nowrap;
   }
-
-  /* Add horizontal gap between Share Experience and profile/auth controls */
-  .navbar-nav.align-items-center {
-    display: flex;
-    align-items: center;
-    gap: 8px; /* horizontal gap you wanted */
-  }
-
-  /* Panels should sit 8px below the navbar trigger (vertical gap) */
   #signInPanel,
   #profilePanel {
     position: absolute;
-    top: calc(100% + 10px); /* 8px vertical gap from the trigger */
+    top: calc(100% + 10px);
     right: 0;
     background-color: #fff;
     border: 1px solid #ddd;
@@ -64,8 +55,6 @@
     width: 320px;
     z-index: 1050;
   }
-
-  /* Close buttons: stable positioning, no extra margin */
   #closeSignIn,
   #closeProfilePanel {
     position: absolute;
@@ -81,15 +70,12 @@
   }
 </style>
 
-
 <nav class="navbar navbar-expand-md bg-body-light border-bottom position-relative">
   <div class="container-fluid">
-    <!-- Left: Icon + Nav links -->
-    <a class="navbar-brand" href="/posts"><i class="fa-solid fa-circle-info"></i></a>
-    <div class="navbar-nav">
-      <a class="nav-link" href="/posts">InfoPics</a>
-      <a class="nav-link" href="/posts/about">About</a>
-    </div>
+    <!-- Brand icon -->
+    <a class="navbar-brand" href="/posts">
+      <i class="fa-solid fa-circle-info"></i>
+    </a>
 
     <!-- Mobile toggle -->
     <button class="navbar-toggler d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -97,87 +83,79 @@
       <i class="fa-solid fa-xmark d-none" id="close-icon"></i>
     </button>
 
-    <!-- Center + Right -->
-    <div class="navbar-collapse collapse d-md-flex justify-content-between" id="navbarNavAltMarkup">
-      <!-- Center: Search bar -->
-      <div class="navbar-nav mx-auto">
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav w-100 d-flex flex-column flex-md-row align-items-md-center justify-content-md-between gap-3">
+
+        <!-- Left: Nav links -->
+        <div class="d-flex flex-column flex-md-row gap-2">
+          <a class="nav-link" href="/posts">InfoPics</a>
+          <a class="nav-link" href="/posts/about">About</a>
+        </div>
+
+        <!-- Center: Search bar -->
         <form class="d-flex align-items-center position-relative" role="search" action="/posts/search" method="GET">
-          <!-- Use canonical filename; onerror falls back to default avatar -->
           <img src="/images/profile.jpg.jpg" alt="Profile" class="search-img" onerror="this.onerror=null; this.src='/images/profile.jpg.jpg';" />
           <input name="q" class="form-control me-2 search-inp ps-5" type="search" placeholder="Search Locations" />
           <button class="btn search-btn" type="submit">
             <i class="fa-solid fa-magnifying-glass"></i>Search
           </button>
         </form>
-      </div>
 
-      <!-- Right: Share + Auth -->
-      <div class="navbar-nav align-items-center position-relative">
-        <a href="/posts/new" class="btn search-btn text-white text-decoration-none rounded-pill d-flex align-items-center justify-content-center" style="padding: 0.5rem 3rem;">Share Experience</a>
+        <!-- Right: Share + Auth -->
+        <div class="d-flex flex-column flex-md-row align-items-md-center gap-2">
+          <a href="/posts/new" class="btn search-btn text-white text-decoration-none rounded-pill d-flex align-items-center justify-content-center">
+            Share Experience
+          </a>
 
-        <% if (!currUser) { %>
-          <a class="nav-link text-dark fw-bold ms-3" href="#" id="openSignIn">Sign in</a>
-
-          <div id="signInPanel" class="d-none">
-            <button id="closeSignIn">✕</button>
-            <h5 class="mb-3 text-center mt-4">InfoPics.in</h5>
-
-            <!-- local login kept for compatibility, but account creation removed -->
-            <form action="/login" method="POST">
-              <div class="mb-3">
-                <label for="username" class="form-label">Username or Gmail</label>
-                <input type="text" name="username" class="form-control" required />
+          <% if (!currUser) { %>
+            <a class="nav-link text-dark fw-bold" href="#" id="openSignIn">Sign in</a>
+            <div id="signInPanel" class="d-none">
+              <button id="closeSignIn">✕</button>
+              <h5 class="mb-3 text-center mt-4">InfoPics.in</h5>
+              <form action="/login" method="POST">
+                <div class="mb-3">
+                  <label for="username" class="form-label">Username or Gmail</label>
+                  <input type="text" name="username" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label">Password</label>
+                  <input type="password" name="password" class="form-control" required />
+                </div>
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" name="staySignedIn" id="staySignedIn">
+                  <label class="form-check-label" for="staySignedIn">Stay signed in</label>
+                </div>
+                <button type="submit" class="btn btn-success text-white text-decoration-none auth-btn d-flex align-items-center justify-content-center">
+                  Sign in
+                </button>
+              </form>
+              <div class="text-center my-3 text-muted">or</div>
+              <a href="/auth/google" class="btn btn-outline-dark text-dark text-decoration-none auth-btn d-flex align-items-center justify-content-center gap-2" style="background-color: transparent;">
+                <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" style="width:20px; height:20px;">
+                Continue with Google
+              </a>
+              <div class="text-center mt-3">
+                <small>New accounts are created with Google only</small>
               </div>
-              <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" name="password" class="form-control" required />
-              </div>
-              <div class="form-check mb-2">
-                <input class="form-check-input" type="checkbox" name="staySignedIn" id="staySignedIn">
-                <label class="form-check-label" for="staySignedIn">Stay signed in</label>
-              </div>
-              <button type="submit" class="btn btn-success text-white text-decoration-none auth-btn d-flex align-items-center justify-content-center">
-                Sign in
-              </button>
-            </form>
-
-            <div class="text-center my-3 text-muted">or</div>
-
-            <!-- Keep Google-only signup path -->
-            <a href="/auth/google" class="btn btn-outline-dark text-dark text-decoration-none auth-btn d-flex align-items-center justify-content-center gap-2" style="background-color: transparent;">
-              <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" style="width:20px; height:20px;">
-              Continue with Google
-            </a>
-
-            <!-- Removed Create an account link; explain Google-only signup -->
-            <div class="text-center mt-3">
-              <small>New accounts are created with Google only</small>
             </div>
-          </div>
-        <% } else { %>
-          <div class="position-relative">
+          <% } else { %>
             <button class="btn p-0 border-0 bg-transparent" id="openProfilePanel">
-              <img
-                 src="<%= currUser ? `/avatar/${currUser._id}` : (tempUser?.profilePic || '/images/profile.jpg.jpg') %>"
-                 alt="Profile"
-                 class="profile-img"
-                 onerror="this.onerror=null; this.src='/images/default-avatar.png';"
-              />
+              <img src="<%= currUser ? `/avatar/${currUser._id}` : (tempUser?.profilePic || '/images/profile.jpg.jpg') %>" alt="Profile" class="profile-img" onerror="this.onerror=null; this.src='/images/default-avatar.png';" />
             </button>
-
             <div id="profilePanel" class="d-none">
-                <button id="closeProfilePanel">✕</button>
-                <h5 class="mb-3 text-center mt-4">Welcome</h5>
-                <p class="text-center text-muted mb-2"><%= currUser.email %></p>
-                <a href="/posts/my-posts" class="btn btn-success text-white text-decoration-none auth-btn d-flex align-items-center justify-content-center mb-2">
-                   My Posts
-                </a>
-                <a href="/logout" class="btn btn-danger text-white text-decoration-none auth-btn d-flex align-items-center justify-content-center">
-                   Log out
-                </a>
+              <button id="closeProfilePanel">✕</button>
+              <h5 class="mb-3 text-center mt-4">Welcome</h5>
+              <p class="text-center text-muted mb-2"><%= currUser.email %></p>
+              <a href="/posts/my-posts" class="btn btn-success text-white text-decoration-none auth-btn d-flex align-items-center justify-content-center mb-2">
+                My Posts
+              </a>
+              <a href="/logout" class="btn btn-danger text-white text-decoration-none auth-btn d-flex align-items-center justify-content-center">
+                Log out
+              </a>
             </div>
-          </div>
-        <% } %>
+          <% } %>
+        </div>
       </div>
     </div>
   </div>
