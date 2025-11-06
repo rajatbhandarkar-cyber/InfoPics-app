@@ -107,7 +107,7 @@ passport.use(
 
         await newUser.save();
         console.log("✅ Created new user from Google profile:", newUser.username);
-        return done(null, newUser);
+        return done(null, false, { tempUser: req.session.tempUser });
 
         // NOTE: tempUser fallback removed because we persist/link/create above.
       } catch (err) {
