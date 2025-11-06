@@ -76,9 +76,8 @@ passport.use(
           return done(null, existingByGoogleId);
         }
 
-        // 3) Try to find an existing user by email and link the googleId, or create a new user
+        // 3) If a user exists with this email -> link Google ID and log them in
         const existingByEmail = await User.findOne({ email });
-
         if (existingByEmail) {
           existingByEmail.googleId = existingByEmail.googleId || googleId;
           existingByEmail.profilePic = existingByEmail.profilePic || picture || "/images/default-avatar.png";
@@ -88,28 +87,18 @@ passport.use(
           return done(null, existingByEmail);
         }
 
-        // 4) No user exists by googleId or email — create one now so the user is logged in immediately.
-        const baseUsername = String(email.split("@")[0]).replace(/[^a-z0-9_-]/gi, "").slice(0, 20) || `user${Date.now()}`;
-        let finalUsername = baseUsername;
-        let suffix = 0;
-        while (await User.exists({ username: finalUsername })) {
-          suffix += 1;
-          finalUsername = `${baseUsername}${suffix}`;
+        // 4) No user exists — store tempUser in session and defer account creation
+        const tempUser = buildTempUser();
+        req.session.tempUser = tempUser;
+
+        if (typeof req.session.save === "function") {
+          await new Promise((resolve, reject) =>
+            req.session.save((err) => (err ? reject(err) : resolve()))
+          );
         }
 
-        const newUser = new User({
-          email,
-          username: finalUsername,
-          googleId,
-          profilePic: picture || "/images/default-avatar.png",
-          verified: true,
-        });
-
-        await newUser.save();
-        console.log("✅ Created new user from Google profile:", newUser.username);
-        return done(null, false, { tempUser: req.session.tempUser });
-
-        // NOTE: tempUser fallback removed because we persist/link/create above.
+        console.log("➡️ Stored tempUser in session for onboarding:", tempUser.email);
+        return done(null, false, { tempUser });
       } catch (err) {
         console.log("❌ Error during Google OAuth:", err);
         return done(err, null);
