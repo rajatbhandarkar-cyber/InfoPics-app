@@ -512,7 +512,7 @@ main {
 }
 
 .large-textarea {
-  min-height: 300px;
+  min-height: 500px;
   resize: vertical;
   font-size: 1rem;
   line-height: 1.6;
