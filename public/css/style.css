@@ -511,8 +511,8 @@ main {
   color: #000;
 }
 
-.large-textarea {
-  min-height: 600px !important;
+textarea.form-control.large-textarea {
+  min-height: 500px !important;
   resize: vertical;
   font-size: 1rem;
   line-height: 1.6;
