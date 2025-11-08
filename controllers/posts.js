@@ -81,7 +81,6 @@ module.exports.updatePost = async (req, res) => {
     await post.save();
   }
 
-  req.flash("success", "Post Updated!");
   res.redirect(`/posts/${id}`);
 };
 
