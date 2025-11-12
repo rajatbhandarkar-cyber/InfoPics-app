@@ -1,0 +1,113 @@
+ed725d7 50 minutes ago | latest commit
+eeb1fef 68 minutes ago | latest commit
+9f90d8f 2 hours ago | latest commit
+7eb8517 3 hours ago | latest commit
+5fc098f 20 hours ago | latest commit
+d779e25 27 hours ago | latest commit
+10d43a8 28 hours ago | latest commit
+565103c 3 days ago | latest commit
+2e73434 4 days ago | latest commit
+e163db2 4 days ago | latest commit
+7d4e2f2 4 days ago | latest commit
+8ab13a5 4 days ago | latest commit
+d2499c7 4 days ago | latest commit
+65acf45 4 days ago | latest commit
+63ef249 4 days ago | latest commit
+89023ff 4 days ago | latest commit
+923ea33 4 days ago | latest update
+24a9b3c 4 days ago | latest update
+3d5352f 4 days ago | latest changes
+ed319c3 5 days ago | latest commit
+432fd9f 5 days ago | latest commit
+fc76f3e 6 days ago | latest ocmmit
+a6b537c 6 days ago | latest update
+238713b 7 days ago | add file
+9bbecec 8 days ago | add new file
+19afad8 8 days ago | latest commit
+36414a4 8 days ago | add file
+8b828ab 8 days ago | add file
+8d7486b 10 days ago | add new file
+53980cb 10 days ago | track file
+d8f0902 2 weeks ago | latest commit
+ea1ad38 2 weeks ago | prevent casterror
+7c31481 2 weeks ago | latest commit
+ea49e10 2 weeks ago | git Email Verification flow
+89ce893 2 weeks ago | Add Google OAuth config and auth routes
+c0eff7e 2 weeks ago | latest commit
+bfced8b 2 weeks ago | latest changes
+09911f0 2 weeks ago | latest commit
+f62c6ea 3 weeks ago | latest changes
+0945836 4 weeks ago | latest commit
+f8f4362 4 weeks ago | latest commit
+2e82ebd 4 weeks ago | latest commit
+66e3b53 4 weeks ago | latest commit
+6df6575 4 weeks ago | latest commit
+c7b889f 4 weeks ago | latest commit
+a958c89 4 weeks ago | latest commit
+35fa2b8 4 weeks ago | latest changes
+8a251c1 4 weeks ago | latest commit
+e3c293d 4 weeks ago | latest commit
+f8313f2 4 weeks ago | latest update
+7ec0c5e 4 weeks ago | latest commit
+4eed7bc 4 weeks ago | latest update
+3370c54 4 weeks ago | latest commit
+8711505 4 weeks ago | latest commit
+0e21657 4 weeks ago | latest commit
+e652f98 4 weeks ago | latest commit
+a8ea451 4 weeks ago | latest commit
+ebfa544 4 weeks ago | latest commit
+ce2f14e 4 weeks ago | latest commit
+8e8d844 4 weeks ago | latest commit
+09e8865 4 weeks ago | latest commit
+d1c4797 4 weeks ago | latest commit
+7dc5087 4 weeks ago | latest commit
+e26f55b 4 weeks ago | latest commit
+1f308aa 4 weeks ago | latest commit
+7d39b58 4 weeks ago | latest commit
+0b2a352 4 weeks ago | latest changes
+541754e 4 weeks ago | latest update
+0fbff02 4 weeks ago | latest changes
+a7f2af7 4 weeks ago | latest changes
+b7c84a3 4 weeks ago | update changes
+2adbcd2 4 weeks ago | update styling
+6990b01 4 weeks ago | style navbar
+7555add 4 weeks ago | add some css
+4f062f4 4 weeks ago | final mobile navbar fix
+21d7e7c 4 weeks ago | fix mobile navbar layout
+c79de6d 5 weeks ago | update code
+1f09c95 5 weeks ago | update button
+53363a0 5 weeks ago | update script file
+c6d38c9 5 weeks ago | make useful changes
+099d682 5 weeks ago | update some files
+a812e42 6 weeks ago | update the code
+0286939 6 weeks ago | update the code
+1a89b34 6 weeks ago | add logo before username
+0025033 6 weeks ago | add comment functionality
+7023863 6 weeks ago | remove one line
+955e6b5 6 weeks ago | add authentication
+2c98c02 6 weeks ago | add styling to like button
+14cc0db 6 weeks ago | style social icons
+23bd210 6 weeks ago | adjust back button
+0d37efd 6 weeks ago | style about button
+d1d282a 6 weeks ago | style about button
+a306ac9 6 weeks ago | add styling to about button
+0efa258 6 weeks ago | add styling at social buttons
+64b59e9 6 weeks ago | add share button styling
+29b607c 6 weeks ago | add social media link
+b8fdb2b 8 weeks ago | resize posts
+e12807b 8 weeks ago | resize posts
+97e69d6 8 weeks ago | add back button
+061eb27 8 weeks ago | your update message (e.g improved)
+c04456b 9 weeks ago | feat: update project with new features and files
+8e37f6b 9 weeks ago | chore: ignore .env
+3342b09 4 months ago | Add about route
+9729149 4 months ago | Add test route
+715291e 4 months ago | Add about route
+bfb87c8 4 months ago | Add about route
+f263bde 4 months ago | Downgrade express to v4 to fix routing error
+881c914 4 months ago | Reinstalled node_modules and updated dependencies
+6e600bd 4 months ago | Remove router package to fix path-to-regexp crash
+6b2214e 4 months ago | Fix: use stable Node version and start script for Render
+25c5ca3 4 months ago | Add root route to redirect to /posts
+37ebe8f 4 months ago | Downgrade cloudinary to resolve dependency conflict
+ef5f9e0 4 months ago | Add Project Files

@@ -25,23 +25,39 @@
       <div class="col-12">
         <h1 class="text-center mb-3">Log in to InfoPics</h1>
 
-        <% if (locals.error && error.length > 0) { %>
-          <div class="alert alert-danger text-center"><%= error %></div>
-        <% } %>
-
-        <% if (locals.success && success.length > 0) { %>
+        <% if (locals.success && success?.length > 0) { %>
           <div class="alert alert-success text-center"><%= success %></div>
         <% } %>
 
         <form action="/login" method="POST" class="needs-validation" novalidate autocomplete="off">
           <div class="mb-3">
             <label for="username" class="form-label">Username</label>
-            <input id="username" name="username" type="text" class="form-control" required autocomplete="username" />
+            <input
+              id="username"
+              name="username"
+              type="text"
+              class="form-control <%= error?.username ? 'is-invalid' : '' %>"
+              required
+              autocomplete="username"
+            />
+            <% if (error?.username) { %>
+              <div class="invalid-feedback"><%= error.username %></div>
+            <% } %>
           </div>
 
           <div class="mb-3">
             <label for="password" class="form-label">Password</label>
-            <input id="password" name="password" type="password" class="form-control" required autocomplete="current-password" />
+            <input
+              id="password"
+              name="password"
+              type="password"
+              class="form-control <%= error?.password ? 'is-invalid' : '' %>"
+              required
+              autocomplete="current-password"
+            />
+            <% if (error?.password) { %>
+              <div class="invalid-feedback"><%= error.password %></div>
+            <% } %>
           </div>
 
           <button type="submit" class="btn btn-success w-100">Sign In</button>
@@ -58,7 +74,6 @@
 </main>
 
 <script>
-  // Keep client validation minimal and non-blocking for server redirects
   (function () {
     'use strict';
     const forms = document.querySelectorAll('.needs-validation');

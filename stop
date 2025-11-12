@@ -1,0 +1,113 @@
+* [33med725d7[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m latest commit
+* [33meeb1fef[m latest commit
+* [33m9f90d8f[m latest commit
+* [33m7eb8517[m latest commit
+* [33m5fc098f[m latest commit
+* [33md779e25[m latest commit
+* [33m10d43a8[m latest commit
+* [33m565103c[m latest commit
+* [33m2e73434[m latest commit
+* [33me163db2[m latest commit
+* [33m7d4e2f2[m latest commit
+* [33m8ab13a5[m latest commit
+* [33md2499c7[m latest commit
+* [33m65acf45[m latest commit
+* [33m63ef249[m latest commit
+* [33m89023ff[m latest commit
+* [33m923ea33[m latest update
+* [33m24a9b3c[m latest update
+* [33m3d5352f[m latest changes
+* [33med319c3[m latest commit
+* [33m432fd9f[m latest commit
+* [33mfc76f3e[m latest ocmmit
+* [33ma6b537c[m latest update
+* [33m238713b[m add file
+* [33m9bbecec[m add new file
+* [33m19afad8[m latest commit
+* [33m36414a4[m add file
+* [33m8b828ab[m add file
+* [33m8d7486b[m add new file
+* [33m53980cb[m track file
+* [33md8f0902[m latest commit
+* [33mea1ad38[m prevent casterror
+* [33m7c31481[m latest commit
+* [33mea49e10[m git Email Verification flow
+* [33m89ce893[m Add Google OAuth config and auth routes
+* [33mc0eff7e[m latest commit
+* [33mbfced8b[m latest changes
+* [33m09911f0[m latest commit
+* [33mf62c6ea[m latest changes
+* [33m0945836[m latest commit
+* [33mf8f4362[m latest commit
+* [33m2e82ebd[m latest commit
+* [33m66e3b53[m latest commit
+* [33m6df6575[m latest commit
+* [33mc7b889f[m latest commit
+* [33ma958c89[m latest commit
+* [33m35fa2b8[m latest changes
+* [33m8a251c1[m latest commit
+* [33me3c293d[m latest commit
+* [33mf8313f2[m latest update
+* [33m7ec0c5e[m latest commit
+* [33m4eed7bc[m latest update
+* [33m3370c54[m latest commit
+* [33m8711505[m latest commit
+* [33m0e21657[m latest commit
+* [33me652f98[m latest commit
+* [33ma8ea451[m latest commit
+* [33mebfa544[m latest commit
+* [33mce2f14e[m latest commit
+* [33m8e8d844[m latest commit
+* [33m09e8865[m latest commit
+* [33md1c4797[m latest commit
+* [33m7dc5087[m latest commit
+* [33me26f55b[m latest commit
+* [33m1f308aa[m latest commit
+* [33m7d39b58[m latest commit
+* [33m0b2a352[m latest changes
+* [33m541754e[m latest update
+* [33m0fbff02[m latest changes
+* [33ma7f2af7[m latest changes
+* [33mb7c84a3[m update changes
+* [33m2adbcd2[m update styling
+* [33m6990b01[m style navbar
+* [33m7555add[m add some css
+* [33m4f062f4[m final mobile navbar fix
+* [33m21d7e7c[m fix mobile navbar layout
+* [33mc79de6d[m update code
+* [33m1f09c95[m update button
+* [33m53363a0[m update script file
+* [33mc6d38c9[m make useful changes
+* [33m099d682[m update some files
+* [33ma812e42[m update the code
+* [33m0286939[m update the code
+* [33m1a89b34[m add logo before username
+* [33m0025033[m add comment functionality
+* [33m7023863[m remove one line
+* [33m955e6b5[m add authentication
+* [33m2c98c02[m add styling to like button
+* [33m14cc0db[m style social icons
+* [33m23bd210[m adjust back button
+* [33m0d37efd[m style about button
+* [33md1d282a[m style about button
+* [33ma306ac9[m add styling to about button
+* [33m0efa258[m add styling at social buttons
+* [33m64b59e9[m add share button styling
+* [33m29b607c[m add social media link
+* [33mb8fdb2b[m resize posts
+* [33me12807b[m resize posts
+* [33m97e69d6[m add back button
+* [33m061eb27[m your update message (e.g improved)
+* [33mc04456b[m feat: update project with new features and files
+* [33m8e37f6b[m chore: ignore .env
+* [33m3342b09[m Add about route
+* [33m9729149[m Add test route
+* [33m715291e[m Add about route
+* [33mbfb87c8[m Add about route
+* [33mf263bde[m Downgrade express to v4 to fix routing error
+* [33m881c914[m Reinstalled node_modules and updated dependencies
+* [33m6e600bd[m Remove router package to fix path-to-regexp crash
+* [33m6b2214e[m Fix: use stable Node version and start script for Render
+* [33m25c5ca3[m Add root route to redirect to /posts
+* [33m37ebe8f[m Downgrade cloudinary to resolve dependency conflict
+* [33mef5f9e0[m Add Project Files

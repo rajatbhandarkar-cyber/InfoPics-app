@@ -41,25 +41,39 @@ router.post("/create-account", wrapAsync(userController.createAccount));
 /**
  * Local login (username + password)
  */
-router
-  .route("/login")
-  .get((req, res) => {
-    const tempUser = req.session.tempUser || null;
-    res.render("users/login", { tempUser });
-  })
-  .post(
-    passport.authenticate("local", {
-      failureFlash: true,
-      failureRedirect: "/login",
-    }),
-    (req, res) => {
+router.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      console.error("❌ Passport error:", err);
+      return next(err);
+    }
+
+    if (!user) {
+      // Stay on login page and show inline errors
+      return res.status(401).render("users/login", {
+        tempUser: req.session.tempUser || null,
+        error: {
+          username: "Wrong username",
+          password: "Wrong password",
+        },
+      });
+    }
+
+    req.logIn(user, (err) => {
+      if (err) {
+        console.error("❌ Login error:", err);
+        return next(err);
+      }
+
       req.flash("success", "Welcome back to InfoPics!");
       req.session.save(() => {
         const redirectUrl = res.locals.redirectUrl || "/posts";
         res.redirect(redirectUrl);
       });
-    }
-  );
+    });
+  })(req, res, next);
+});
+
 
 /**
  * Logout
