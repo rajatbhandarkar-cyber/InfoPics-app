@@ -81,5 +81,45 @@
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" defer></script>
   <script src="/js/script.js" defer></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.querySelector("#signInForm");
+      if (!form) return;
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const username = form.username.value;
+        const password = form.password.value;
+
+        const res = await fetch("/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          window.location.href = "/posts";
+        } else {
+          // Clear previous errors
+          form.username.classList.remove("is-invalid");
+          form.password.classList.remove("is-invalid");
+          document.querySelector("#usernameError").textContent = "";
+          document.querySelector("#passwordError").textContent = "";
+
+          // Show new errors
+          form.username.classList.add("is-invalid");
+          document.querySelector("#usernameError").textContent = data.error.username;
+
+          form.password.classList.add("is-invalid");
+          document.querySelector("#passwordError").textContent = data.error.password;
+        }
+      });
+    });
+  </script>
+
 </body>
 </html>

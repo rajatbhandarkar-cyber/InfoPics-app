@@ -102,25 +102,33 @@
           </button>
         </form>
 
-        <!-- Right: Share + Auth
+        <!-- Right: Share + Auth -->
         <div class="d-flex flex-column flex-md-row align-items-md-center gap-2">
-          <a href="/posts/new" class="btn search-btn text-white text-decoration-none rounded-pill d-flex align-items-center justify-content-center">
-            Share Experience
-          </a>
+          <% if (currUser) { %>
+            <a href="/posts/new" class="btn search-btn text-white text-decoration-none rounded-pill d-flex align-items-center justify-content-center">
+              Share Experience
+            </a>
+          <% } else { %>
+            <button class="btn search-btn text-white text-decoration-none rounded-pill d-flex align-items-center justify-content-center" id="openShareExperience">
+              Share Experience
+            </button>
+          <% } %>
 
           <% if (!currUser) { %>
             <a class="nav-link text-dark fw-bold" href="#" id="openSignIn">Sign in</a>
             <div id="signInPanel" class="d-none">
               <button id="closeSignIn">✕</button>
               <h5 class="mb-3 text-center mt-4">InfoPics.in</h5>
-              <form action="/login" method="POST">
+              <form id="signInForm" novalidate>
                 <div class="mb-3">
                   <label for="username" class="form-label">Username or Gmail</label>
-                  <input type="text" name="username" class="form-control" required />
+                  <input type="text" name="username" id="username" class="form-control" required />
+                  <div id="usernameError" class="invalid-feedback"></div>
                 </div>
                 <div class="mb-3">
                   <label for="password" class="form-label">Password</label>
-                  <input type="password" name="password" class="form-control" required />
+                  <input type="password" name="password" id="password" class="form-control" required />
+                  <div id="passwordError" class="invalid-feedback"></div>
                 </div>
                 <div class="form-check mb-2">
                   <input class="form-check-input" type="checkbox" name="staySignedIn" id="staySignedIn">
@@ -131,7 +139,7 @@
                 </button>
               </form>
               <div class="text-center my-3 text-muted">or</div>
-              <a href="/auth/google" class="btn btn-outline-dark text-dark text-decoration-none auth-btn d-flex align-items-center justify-content-center gap-2" style="background-color: transparent;">
+              <a href="/auth/google?redirect=/posts/new" class="btn btn-outline-dark text-dark text-decoration-none auth-btn d-flex align-items-center justify-content-center gap-2" style="background-color: transparent;">
                 <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" style="width:20px; height:20px;">
                 Continue with Google
               </a>
@@ -155,74 +163,13 @@
               </a>
             </div>
           <% } %>
-        </div> -->
-
-
-        <!-- Right: Share + Auth -->
-        <div class="d-flex flex-column flex-md-row align-items-md-center gap-2">
-           <% if (currUser) { %>
-              <a href="/posts/new" class="btn search-btn text-white text-decoration-none rounded-pill d-flex align-items-center justify-content-center">
-                Share Experience
-              </a>
-           <% } else { %>
-              <button class="btn search-btn text-white text-decoration-none rounded-pill d-flex align-items-center justify-content-center" id="openShareExperience">
-                Share Experience
-              </button>
-           <% } %>
-
-           <% if (!currUser) { %>
-             <a class="nav-link text-dark fw-bold" href="#" id="openSignIn">Sign in</a>
-                <div id="signInPanel" class="d-none">
-                 <button id="closeSignIn">✕</button>
-                   <h5 class="mb-3 text-center mt-4">InfoPics.in</h5>
-                     <form action="/login" method="POST">
-                       <div class="mb-3">
-                         <label for="username" class="form-label">Username or Gmail</label>
-                         <input type="text" name="username" class="form-control" required />
-                       </div>
-                       <div class="mb-3">
-                         <label for="password" class="form-label">Password</label>
-                         <input type="password" name="password" class="form-control" required />
-                       </div>
-                       <div class="form-check mb-2">
-                         <input class="form-check-input" type="checkbox" name="staySignedIn" id="staySignedIn">
-                         <label class="form-check-label" for="staySignedIn">Stay signed in</label>
-                       </div>
-                       <button type="submit" class="btn btn-success text-white text-decoration-none auth-btn d-flex align-items-center justify-content-center">
-                         Sign in
-                       </button>
-                     </form>
-                     <div class="text-center my-3 text-muted">or</div>
-                    <a href="/auth/google?redirect=/posts/new" class="btn btn-outline-dark text-dark text-decoration-none auth-btn d-flex align-items-center justify-content-center gap-2" style="background-color: transparent;">
-                    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" style="width:20px; height:20px;">
-                       Continue with Google
-                    </a>
-                    <div class="text-center mt-3">
-                      <small>New accounts are created with Google only</small>
-                    </div>
-                </div>
-                <% } else { %>
-                <button class="btn p-0 border-0 bg-transparent" id="openProfilePanel">
-                  <img src="<%= currUser ? `/avatar/${currUser._id}` : (tempUser?.profilePic || '/images/profile.jpg.jpg') %>" alt="Profile" class="profile-img" onerror="this.onerror=null; this.src='/images/default-avatar.png';" />
-                  </button>
-                  <div id="profilePanel" class="d-none">
-                      <button id="closeProfilePanel">✕</button>
-                      <h5 class="mb-3 text-center mt-4">Welcome</h5>
-                      <p class="text-center text-muted mb-2"><%= currUser.email %></p>
-                     <a href="/posts/my-posts" class="btn btn-success text-white text-decoration-none auth-btn d-flex align-items-center justify-content-center mb-2">
-                        My Posts
-                     </a>
-                    <a href="/logout" class="btn btn-danger text-white text-decoration-none auth-btn d-flex align-items-center justify-content-center">
-                       Log out
-                    </a>
-                  </div>
-           <% } %>
-         </div>
+        </div>
       </div>
     </div>
   </div>
 </nav>
 
+<!-- ✅ Modal behavior + AJAX login -->
 <script>
   const openSignIn = document.getElementById('openSignIn');
   const closeSignIn = document.getElementById('closeSignIn');
@@ -264,4 +211,40 @@
       profilePanel.classList.add('d-none');
     });
   }
+
+  // ✅ AJAX login with inline error feedback
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.querySelector("#signInForm");
+    if (!form) return;
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const username = form.username.value;
+      const password = form.password.value;
+
+      const res = await fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        window.location.href = "/posts";
+      } else {
+        form.username.classList.remove("is-invalid");
+        form.password.classList.remove("is-invalid");
+        document.querySelector("#usernameError").textContent = "";
+        document.querySelector("#passwordError").textContent = "";
+
+        form.username.classList.add("is-invalid");
+        document.querySelector("#usernameError").textContent = data.error.username;
+
+        form.password.classList.add("is-invalid");
+        document.querySelector("#passwordError").textContent = data.error.password;
+      }
+    });
+  });
 </script>
