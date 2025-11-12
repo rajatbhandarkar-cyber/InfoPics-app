@@ -49,8 +49,8 @@ router.post("/login", express.json(), (req, res, next) => {
       return res.status(401).json({
         success: false,
         error: {
-          username: "Wrong username",
-          password: "Wrong password",
+          username: "Something went wrong, please try again.",
+          password: "Something went wrong, please try again.",
         },
       });
     }
