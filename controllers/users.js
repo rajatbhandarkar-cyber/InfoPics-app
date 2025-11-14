@@ -38,12 +38,6 @@ module.exports.renderCreateAccount = (req, res) => {
   return res.render("users/signup", { tempUser });
 };
 
-/**
- * Create-account (POST)
- * - Reads req.session.tempUser, validates username/password,
- * - Registers the user (passport-local-mongoose), logs them in,
- * - Clears session.tempUser, persists session, redirects to /posts.
- */
 module.exports.createAccount = async (req, res, next) => {
   try {
     const tempRaw = req.session?.tempUser;
