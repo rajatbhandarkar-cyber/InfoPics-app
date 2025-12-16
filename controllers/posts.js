@@ -3,7 +3,7 @@ const Post = require("../models/post");
 
 module.exports.index = async (req, res) => {
   // ✅ Show only public posts on homepage
-  const allPosts = await Post.find({ isPrivate: false })
+  const allPosts = await Post.find({ isPrivate: { $ne: true } })
     .sort({ _id: -1 })
     .populate("owner")
     .lean();
