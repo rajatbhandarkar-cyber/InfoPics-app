@@ -24,7 +24,7 @@ router
 router.get("/new", isLoggedIn, postController.renderNewForm);
 
 // My Posts - use controller to split public/private posts
-router.get("/my-posts", isLoggedIn, wrapAsync(postController.renderMyPosts));
+router.get("/my-posts", isLoggedIn, wrapAsync(postController.showMyPosts));
 
 // Search + About
 router.get("/search", wrapAsync(postController.searchPosts));
