@@ -125,18 +125,16 @@
 <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
 <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
 <script>
-  var grid = document.querySelector('.grid');
-  var msnry;
-  if (grid) {
-    imagesLoaded(grid, function() {
-      msnry = new Masonry(grid, {
-        itemSelector: '.grid-item',
-        columnWidth: 340,
-        gutter: 16,
-        fitWidth: true
-      });
+  document.querySelectorAll('.grid').forEach(grid => {
+  imagesLoaded(grid, function() {
+    new Masonry(grid, {
+      itemSelector: '.grid-item',
+      columnWidth: 340,
+      gutter: 16,
+      fitWidth: true
     });
-  }
+  });
+  });
 
   document.addEventListener("click", function(e){
     if(e.target.classList.contains("read-more")){
