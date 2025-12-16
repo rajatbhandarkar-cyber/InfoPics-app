@@ -45,9 +45,22 @@
             type="text"
             class="form-control large-textarea"
             required
+            
             ></textarea>
             <div class="invalid-feedback">Please share your Experiance / Story!</div>
         </div>
+
+        <!-- 🔒 Privacy toggle -->
+         <div class="mb-3">
+            <label for="isPrivate" class="form-label">Privacy</label>
+            <select name="post[isPrivate]" id="isPrivate" class="form-control">
+               <option value="false" selected>Public</option>
+               <option value="true">Private</option>
+            </select>
+            <small class="text-muted">Choose whether your post is visible to everyone or only to you.</small>
+         </div>
+
+
        <button class="btn btn-dark">Add</button>
        <br/><br/>
       </form>

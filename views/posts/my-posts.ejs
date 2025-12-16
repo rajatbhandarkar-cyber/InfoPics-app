@@ -1,70 +1,125 @@
 <% layout('/layouts/boilerplate') %>
 
-<%
-// Use `posts` (from controller) — fall back to `allPosts` if needed
-const list = (typeof posts !== 'undefined') ? posts : (typeof allPosts !== 'undefined' ? allPosts : []);
-%>
-
 <div class="container my-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h3>My Posts</h3>
   </div>
 
-  <% if (!list || list.length === 0) { %>
-    <div class="no-posts text-center w-100 my-5">
-      <h4>You haven't shared any experiences yet.</h4>
-      <p class="text-muted">Start by clicking <a href="/posts/new">Share Experience</a>.</p>
-    </div>
-  <% } else { %>
-    <div class="grid">
-      <% for (let post of list) { %>
-        <div class="grid-item post-card">
-          <a href="/posts/<%= post._id %>" class="card-link">
-            <img src="<%= post.image && post.image.url ? post.image.url : '/images/default-post.png' %>" class="card-img-top" alt="post_image">
-          </a>
+  <!-- 🔘 Toggle buttons -->
+  <div class="d-flex justify-content-center mb-4">
+    <button id="show-public" class="btn btn-dark mx-2">Public</button>
+    <button id="show-private" class="btn btn-dark mx-2">Private</button>
+  </div>
 
-          <div class="card-body">
-            <div class="post-content">
-              <p>
-                <b><%= post.location %></b><br />
-                <% if (post.description && post.description.length > 300) { %>
-                  <span class="short-text"><%= post.description.substring(0, 300) %>...</span>
-                  <span class="full-text" style="display:none;"><%= post.description %></span>
-                  <span class="read-more">Read more</span>
-                <% } else { %>
-                  <%= post.description %>
-                <% } %>
-              </p>
-            </div>
-
-            <div style="width: 100%; display: flex; justify-content: flex-end;">
-              <div class="share-container d-flex align-items-center mt-3">
-                <% if (currUser) { %>
-                  <div class="like-btn" data-id="<%= post._id %>">
-                    <i class="fas fa-heart <%= (post.likedBy || []).some(id => id.toString() === (currUser._id && currUser._id.toString())) ? 'liked' : '' %>"></i>
-                    <% if (post.likes && post.likes > 0) { %>
-                      <span class="badge bg-danger"><%= post.likes %></span>
-                    <% } %>
+  <!-- Public posts section -->
+  <div id="public-posts">
+    <% if (!publicPosts || publicPosts.length === 0) { %>
+      <div class="no-posts text-center w-100 my-5">
+        <h4>No public posts found.</h4>
+        <p class="text-muted">Start by clicking <a href="/posts/new">Share Experience</a>.</p>
+      </div>
+    <% } else { %>
+      <div class="grid">
+        <% for (let post of publicPosts) { %>
+          <div class="grid-item post-card">
+            <a href="/posts/<%= post._id %>" class="card-link">
+              <img src="<%= post.image && post.image.url ? post.image.url : '/images/default-post.png' %>" class="card-img-top" alt="post_image">
+            </a>
+            <div class="card-body">
+              <div class="post-content">
+                <p>
+                  <b><%= post.location %></b><br />
+                  <% if (post.description && post.description.length > 300) { %>
+                    <span class="short-text"><%= post.description.substring(0, 300) %>...</span>
+                    <span class="full-text" style="display:none;"><%= post.description %></span>
+                    <span class="read-more">Read more</span>
+                  <% } else { %>
+                    <%= post.description %>
+                  <% } %>
+                </p>
+              </div>
+              <div style="width: 100%; display: flex; justify-content: flex-end;">
+                <div class="share-container d-flex align-items-center mt-3">
+                  <% if (currUser) { %>
+                    <div class="like-btn" data-id="<%= post._id %>">
+                      <i class="fas fa-heart <%= (post.likedBy || []).some(id => id.toString() === (currUser._id && currUser._id.toString())) ? 'liked' : '' %>"></i>
+                      <% if (post.likes && post.likes > 0) { %>
+                        <span class="badge bg-danger"><%= post.likes %></span>
+                      <% } %>
+                    </div>
+                    <div class="comment-btn position-relative" data-id="<%= post._id %>" title="View and add comments">
+                      <i class="fas fa-comment" style="font-size: 1.2rem; color: #000;"></i>
+                      <% if (post.comments && post.comments.length > 0) { %>
+                        <span class="badge"><%= post.comments.length %></span>
+                      <% } %>
+                    </div>
+                  <% } %>
+                  <div class="share-btn" data-url="https://infopics.in/posts/<%= post._id %>" data-title="Check out <%= post.location %> on InfoPics" title="Share this post">
+                    <i class="fas fa-share-alt"></i>
                   </div>
-
-                  <div class="comment-btn position-relative" data-id="<%= post._id %>" title="View and add comments">
-                    <i class="fas fa-comment" style="font-size: 1.2rem; color: #000;"></i>
-                    <% if (post.comments && post.comments.length > 0) { %>
-                      <span class="badge"><%= post.comments.length %></span>
-                    <% } %>
-                  </div>
-                <% } %>
-
-                <div class="share-btn" data-url="https://infopics.in/posts/<%= post._id %>" data-title="Check out <%= post.location %> on InfoPics" title="Share this post">
-                  <i class="fas fa-share-alt"></i>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      <% } %>
-    </div>
-  <% } %>
+        <% } %>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Private posts section -->
+  <div id="private-posts" style="display:none;">
+    <% if (!privatePosts || privatePosts.length === 0) { %>
+      <div class="no-posts text-center w-100 my-5">
+        <h4>No private posts found.</h4>
+        <p class="text-muted">You can create private posts by selecting “Private” when adding a new post.</p>
+      </div>
+    <% } else { %>
+      <div class="grid">
+        <% for (let post of privatePosts) { %>
+          <div class="grid-item post-card">
+            <a href="/posts/<%= post._id %>" class="card-link">
+              <img src="<%= post.image && post.image.url ? post.image.url : '/images/default-post.png' %>" class="card-img-top" alt="post_image">
+            </a>
+            <div class="card-body">
+              <div class="post-content">
+                <p>
+                  <b><%= post.location %></b><br />
+                  <% if (post.description && post.description.length > 300) { %>
+                    <span class="short-text"><%= post.description.substring(0, 300) %>...</span>
+                    <span class="full-text" style="display:none;"><%= post.description %></span>
+                    <span class="read-more">Read more</span>
+                  <% } else { %>
+                    <%= post.description %>
+                  <% } %>
+                </p>
+              </div>
+              <div style="width: 100%; display: flex; justify-content: flex-end;">
+                <div class="share-container d-flex align-items-center mt-3">
+                  <% if (currUser) { %>
+                    <div class="like-btn" data-id="<%= post._id %>">
+                      <i class="fas fa-heart <%= (post.likedBy || []).some(id => id.toString() === (currUser._id && currUser._id.toString())) ? 'liked' : '' %>"></i>
+                      <% if (post.likes && post.likes > 0) { %>
+                        <span class="badge bg-danger"><%= post.likes %></span>
+                      <% } %>
+                    </div>
+                    <div class="comment-btn position-relative" data-id="<%= post._id %>" title="View and add comments">
+                      <i class="fas fa-comment" style="font-size: 1.2rem; color: #000;"></i>
+                      <% if (post.comments && post.comments.length > 0) { %>
+                        <span class="badge"><%= post.comments.length %></span>
+                      <% } %>
+                    </div>
+                  <% } %>
+                  <div class="share-btn" data-url="https://infopics.in/posts/<%= post._id %>" data-title="Check out <%= post.location %> on InfoPics" title="Share this post">
+                    <i class="fas fa-share-alt"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    <% } %>
+  </div>
 </div>
 
 <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
@@ -102,6 +157,16 @@ const list = (typeof posts !== 'undefined') ? posts : (typeof allPosts !== 'unde
       if (msnry) msnry.layout();
     }
   });
+
+  // 🔘 Toggle logic
+  document.getElementById("show-public").onclick = () => {
+    document.getElementById("public-posts").style.display = "block";
+    document.getElementById("private-posts").style.display = "none";
+  };
+  document.getElementById("show-private").onclick = () => {
+    document.getElementById("public-posts").style.display = "none";
+    document.getElementById("private-posts").style.display = "block";
+  };
 </script>
 
 <style>

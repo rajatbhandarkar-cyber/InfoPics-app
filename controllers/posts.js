@@ -2,7 +2,11 @@ const { model } = require("mongoose");
 const Post = require("../models/post");
 
 module.exports.index = async (req, res) => {
-  const allPosts = await Post.find({}).sort({ _id: -1 }).populate("owner").lean();
+  // ✅ Show only public posts on homepage
+  const allPosts = await Post.find({ isPrivate: false })
+    .sort({ _id: -1 })
+    .populate("owner")
+    .lean();
   res.render("posts/index.ejs", { allPosts, currUser: req.user });
 };
 
@@ -42,6 +46,10 @@ module.exports.createPost = async (req, res, next) => {
   }
 
   newPost.image = { url, filename };
+
+  // ✅ Ensure isPrivate is saved as Boolean
+  newPost.isPrivate = req.body.post.isPrivate === "true";
+
   await newPost.save();
   req.flash("success", "New Post Created!");
   res.redirect("/posts");
@@ -49,7 +57,8 @@ module.exports.createPost = async (req, res, next) => {
 
 module.exports.searchPosts = async (req, res) => {
   const { q } = req.query;
-  const posts = await Post.find({ location: new RegExp(q, "i") }).lean(); // case-insensitive partial match
+  // ✅ Search only public posts
+  const posts = await Post.find({ location: new RegExp(q, "i"), isPrivate: false }).lean();
   res.render("posts/index.ejs", { allPosts: posts, currUser: req.user });
 };
 
@@ -70,8 +79,9 @@ module.exports.updatePost = async (req, res) => {
   let { id } = req.params;
   const updates = { ...req.body.post };
 
-  // If ownerUsername should reflect a username change, you may want to update it here.
-  // But typically username changes are rare; keep existing ownerUsername unless you manage username updates.
+  // ✅ Ensure isPrivate is updated correctly
+  updates.isPrivate = req.body.post.isPrivate === "true";
+
   const post = await Post.findByIdAndUpdate(id, updates, { new: true });
 
   if (typeof req.file !== "undefined") {
@@ -159,7 +169,7 @@ module.exports.likePost = async (req, res) => {
 
 /**
  * New: show only posts created by the logged-in user
- * Uses denormalized ownerUsername field for filtering as requested
+ * Split into public and private
  */
 module.exports.showMyPosts = async (req, res, next) => {
   try {
@@ -169,12 +179,17 @@ module.exports.showMyPosts = async (req, res, next) => {
       return res.redirect("/posts");
     }
 
-    const posts = await Post.find({ ownerUsername: username })
+    const publicPosts = await Post.find({ ownerUsername: username, isPrivate: false })
       .sort({ createdAt: -1 })
       .populate("owner")
       .lean();
 
-    res.render("posts/my-posts", { posts, currUser: req.user });
+    const privatePosts = await Post.find({ ownerUsername: username, isPrivate: true })
+      .sort({ createdAt: -1 })
+      .populate("owner")
+      .lean();
+
+    res.render("posts/my-posts", { publicPosts, privatePosts, currUser: req.user });
   } catch (err) {
     next(err);
   }

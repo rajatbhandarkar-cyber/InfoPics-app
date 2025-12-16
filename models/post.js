@@ -93,6 +93,11 @@ const postSchema = new Schema({
     }
   ],
 
+  // Privacy toggle 
+  isPrivate: { 
+    type: Boolean, 
+    default: false // by default posts are public
+  },
   comments: [commentSchema]
 }, { timestamps: true });
 

@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const wrapAsync = require("../utils/wrapAsync.js");
-const Post = require("../models/post.js");
 const { isLoggedIn, isOwner, validatePost } = require("../middleware.js");
 const mongoose = require("mongoose");
 
@@ -24,32 +23,8 @@ router
 // New Post Form
 router.get("/new", isLoggedIn, postController.renderNewForm);
 
-// My Posts - show only posts created by the logged-in user (filtered by username)
-router.get(
-  "/my-posts",
-  isLoggedIn,
-  wrapAsync(async (req, res, next) => {
-    try {
-      const username = req.user && req.user.username;
-      if (!username) {
-        req.flash && req.flash("error", "Unable to identify current user");
-        return res.redirect("/posts");
-      }
-
-      // If your Post schema stores the author's username as `authorUsername` (string)
-      const posts = await Post.find({ ownerUsername: username })
-        .sort({ createdAt: -1 })
-        .lean();
-
-      // --- ALTERNATIVE (recommended) if your Post schema stores author as ObjectId:
-      // const posts = await Post.find({ author: req.user._id }).sort({ createdAt: -1 }).populate('author', 'username profilePic').lean();
-
-      res.render("posts/my-posts", { posts, currUser: req.user });
-    } catch (err) {
-      next(err);
-    }
-  })
-);
+// My Posts - use controller to split public/private posts
+router.get("/my-posts", isLoggedIn, wrapAsync(postController.renderMyPosts));
 
 // Search + About
 router.get("/search", wrapAsync(postController.searchPosts));
