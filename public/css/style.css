@@ -724,3 +724,11 @@ body.modal-open {
   transform: translateX(18px);
 }
 
+/* Align label and toggle horizontally */
+.privacy-container {
+  display: flex;
+  align-items: center;   /* vertically center items */
+  gap: 10px;             /* space between label and toggle */
+}
+
+
