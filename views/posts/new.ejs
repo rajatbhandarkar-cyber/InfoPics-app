@@ -51,20 +51,13 @@
 
       <!-- 🔒 Privacy toggle -->
       <div class="mb-3">
-        <label class="form-label">Privacy</label>
-        <div class="form-check form-switch">
-          <input 
-            class="form-check-input" 
-            type="checkbox" 
-            id="privacyToggle" 
-            name="post[isPrivate]" 
-            value="true"
-          />
-          <label class="form-check-label" for="privacyToggle">Private</label>
-        </div>
-        <small class="text-muted">By default, your post is public. Toggle to make it private.</small>
+         <label class="form-label">Privacy</label>
+         <label class="privacy-toggle">
+            <input type="checkbox" name="post[isPrivate]" value="true" />
+            <span class="privacy-slider"></span>
+         </label>
+         <small class="text-muted d-block mt-1">By default, your post is public. Toggle to make it private.</small>
       </div>
-
       <button class="btn btn-dark">Add</button>
       <br/><br/>
     </form>
