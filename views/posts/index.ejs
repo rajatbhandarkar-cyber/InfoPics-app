@@ -36,13 +36,6 @@ const list = (typeof posts !== 'undefined') ? posts : (typeof allPosts !== 'unde
                 <%= post.description %>
               <% } %>
             </p>
-
-            <!-- 🔒 Show privacy status if available -->
-            <% if (typeof post.isPrivate !== 'undefined') { %>
-              <p class="text-muted small">
-                Privacy: <%= post.isPrivate ? "Private" : "Public" %>
-              </p>
-            <% } %>
           </div>
 
           <!-- Share container -->
