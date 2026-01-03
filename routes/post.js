@@ -3,6 +3,7 @@ const router = express.Router();
 const wrapAsync = require("../utils/wrapAsync.js");
 const { isLoggedIn, isOwner, validatePost } = require("../middleware.js");
 const mongoose = require("mongoose");
+const Post = require("./models/post");
 
 const postController = require("../controllers/posts.js");
 const multer = require("multer");
