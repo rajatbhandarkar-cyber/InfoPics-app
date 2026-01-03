@@ -175,6 +175,40 @@
       Masonry.data(grid)?.layout();
     });
   };
+
+  document.addEventListener("click", async function(e) {
+  // Like button
+  if (e.target.closest(".like-btn")) {
+    const btn = e.target.closest(".like-btn");
+    const postId = btn.dataset.id;
+
+    const res = await fetch(`/posts/${postId}/like`, { method: "POST" });
+    const data = await res.json();
+
+    if (data.success) {
+      // Toggle heart icon
+      btn.querySelector("i").classList.toggle("liked");
+      // Update badge count
+      const badge = btn.querySelector(".badge");
+      if (badge) {
+        badge.textContent = parseInt(badge.textContent) + (btn.querySelector("i").classList.contains("liked") ? 1 : -1);
+      } else {
+        btn.insertAdjacentHTML("beforeend", `<span class="badge bg-danger">1</span>`);
+      }
+    }
+  }
+
+  // Comment button
+  if (e.target.closest(".comment-btn")) {
+    const btn = e.target.closest(".comment-btn");
+    const postId = btn.dataset.id;
+    // Redirect or open modal for comments
+    window.location.href = `/posts/${postId}#all-comments`;
+  }
+});
+
+
+
 </script>
 
 <style>
