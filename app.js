@@ -27,7 +27,7 @@ const verifyRouter = require("./routes/verify.js");
 const avatarRouter = require("./routes/avatar");
 
 // ✅ Database Connection
-const dbUrl = process.env.MONGODB_URL.replace("infopics", "InfoPics");
+const dbUrl = process.env.MONGODB_URL;
 main()
   .then(() => console.log("✅ Connected to DB"))
   .catch((err) => console.log("❌ DB Connection Error:", err));
