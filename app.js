@@ -157,7 +157,7 @@ app.use((err, req, res, next) => {
 });
 
 // ✅ Start Server
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 app.listen(port, () => {
   console.log(`🚀 InfoPics is running on port ${port}`);
 });

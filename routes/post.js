@@ -33,6 +33,10 @@ router.get("/about", (req, res) => {
   res.render("posts/about");
 });
 
+router.get("/meet",(req,res) => {
+  res.render("posts/meet");
+});
+
 // Show, Update, Delete
 router
   .route("/:id")
