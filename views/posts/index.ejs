@@ -28,18 +28,12 @@ const list = (typeof posts !== 'undefined') ? posts : (typeof allPosts !== 'unde
           <div class="post-content">
             <p>
               <b><%= post.location %></b><br />
-              <% if (post.isPrivate) { %>
-                <!-- Private posts: always show full description -->
-                <%= post.description %>
+              <% if (post.description && post.description.length > 500) { %>
+                <span class="short-text"><%= post.description.substring(0, 500) %>...</span>
+                <span class="full-text" style="display:none;"><%= post.description %></span>
+                <span class="read-more">Read more</span>
               <% } else { %>
-                <!-- Public posts: apply read-more if long -->
-                <% if (post.description && post.description.length > 500) { %>
-                  <span class="short-text"><%= post.description.substring(0, 500) %>...</span>
-                  <span class="full-text" style="display:none;"><%= post.description %></span>
-                  <span class="read-more">Read more</span>
-                <% } else { %>
-                  <%= post.description %>
-                <% } %>
+                <%= post.description %>
               <% } %>
             </p>
           </div>
