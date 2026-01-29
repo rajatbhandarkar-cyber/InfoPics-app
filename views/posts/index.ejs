@@ -5,9 +5,21 @@
 const list = (typeof posts !== 'undefined') ? posts : (typeof allPosts !== 'undefined' ? allPosts : []);
 %>
 
+
+<!-- <div class="filter-bar d-flex flex-wrap gap-3 mb-4 justify-content-center">
+  <a href="/posts/search?category=Adventure" class="btn search-btn">🏕️ Adventure</a>
+  <a href="/posts/search?category=Forts" class="btn search-btn">🏰 Forts</a>
+  <a href="/posts/search?category=Beaches" class="btn search-btn">🏖️ Beaches</a>
+  <a href="/posts/search?category=Temples" class="btn search-btn">🛕 Temples</a>
+  <a href="/posts/search?category=Mountains" class="btn search-btn">⛰️ Mountains</a>
+  <a href="/posts/search?category=Culture" class="btn search-btn">🎭 Culture</a>
+  <a href="/posts/search?category=Food" class="btn search-btn">🍲 Food</a>
+  <a href="/posts/search?category=Hidden Gems" class="btn search-btn">✨ Hidden Gems</a>
+</div> -->
+
 <!-- 🔹 Category Filter Bar -->
 <div class="category-grid">
-  <a href="/search?category=Adventure" class="category-tile">
+  <a href="posts/search?category=Adventure" class="category-tile">
     <i class="fas fa-hiking"></i>
     <span>Adventure</span>
   </a>
@@ -36,7 +48,6 @@ const list = (typeof posts !== 'undefined') ? posts : (typeof allPosts !== 'unde
     <span>Hidden Gems</span>
   </a>
 </div>
-
 
 
 <div class="grid">
