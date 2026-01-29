@@ -780,7 +780,7 @@ body.modal-open {
   flex-wrap: wrap;
   gap: 20px;
   justify-content: center;
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
 .category-tile {
@@ -788,15 +788,15 @@ body.modal-open {
   flex-direction: column;
   align-items: center;
   text-decoration: none;
-  color: #333;
+  color: #2c2c2c;
   width: 100px;
   transition: transform 0.2s ease;
+  gap: 8px; /* spacing between icon and text */
 }
 
 .category-tile i {
-  font-size: 24px;
-  margin-bottom: 6px;
-  color: #333333 /* Airbnb-style accent */
+  font-size: 20px;
+  color: #2c2c2c;
 }
 
 .category-tile span {
@@ -806,9 +806,10 @@ body.modal-open {
 
 .category-tile:hover {
   transform: scale(1.05);
-  color:#333333;
+  color: #2c2c2c;
 }
 
-
-
+.grid {
+  margin-top: 20px; /* adds space between category icons and post cards */
+}
 
