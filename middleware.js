@@ -57,6 +57,13 @@ module.exports.isOwner = async (req, res, next) => {
 
 // Validate post payload against Joi schema
 module.exports.validatePost = (req, res, next) => {
+  // Normalize categories: ensure it's always an array
+  if (req.body.post && req.body.post.categories) {
+    if (!Array.isArray(req.body.post.categories)) {
+      req.body.post.categories = [req.body.post.categories];
+    }
+  }
+
   const { error } = postSchema.validate(req.body);
   if (error) {
     const errMsg = error.details.map((el) => el.message).join(", ");
@@ -64,6 +71,7 @@ module.exports.validatePost = (req, res, next) => {
   }
   next();
 };
+
 
 // Validate review payload against Joi schema
 module.exports.validateReview = (req, res, next) => {
