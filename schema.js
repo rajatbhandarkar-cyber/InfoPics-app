@@ -6,13 +6,18 @@ module.exports.postSchema = Joi.object({
     country: Joi.string().required(),
     description: Joi.string().required(),
     image: Joi.string().allow("", null),
-    isPrivate: Joi.boolean().default(false)   // ✅ allow public/private toggle
-  }).required()
-});
-
-module.exports.reviewSchema = Joi.object({
-  review: Joi.object({
-    rating: Joi.number().required().min(1).max(5),
-    comment: Joi.string().required(),
+    isPrivate: Joi.boolean().default(false),
+    categories: Joi.array().items(
+      Joi.string().valid(
+        "Adventure",
+        "Forts",
+        "Beaches",
+        "Temples",
+        "Mountains",
+        "Culture",
+        "Food",
+        "Hidden Gems"
+      )
+    ).default([])
   }).required()
 });
