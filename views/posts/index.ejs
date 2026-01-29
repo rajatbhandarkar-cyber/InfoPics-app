@@ -47,6 +47,18 @@ const list = (typeof posts !== 'undefined') ? posts : (typeof allPosts !== 'unde
     <i class="fas fa-gem"></i>
     <span>Hidden Gems</span>
   </a>
+  <a href="/search?category=Wildlife" class="category-tile">
+    <i class="fas fa-paw"></i>
+    <span>Wildlife</span>
+  </a>
+  <a href="/search?category=Historical Sites" class="category-tile">
+    <i class="fas fa-landmark"></i>
+    <span>Historical Sites</span>
+  </a>
+  <a href="/search?category=Lakes & Rivers" class="category-tile">
+    <i class="fas fa-water"></i>
+    <span>Lakes & Rivers</span>
+  </a>
 </div>
 
 
@@ -81,13 +93,6 @@ const list = (typeof posts !== 'undefined') ? posts : (typeof allPosts !== 'unde
                 <%= post.description %>
               <% } %>
             </p>
-
-            <!-- Show categories -->
-            <% if (post.categories && post.categories.length > 0) { %>
-              <p class="mt-2">
-                <small class="text-muted">Categories: <%= post.categories.join(", ") %></small>
-              </p>
-            <% } %>
           </div>
 
           <!-- Share container -->
