@@ -794,8 +794,8 @@ body.modal-open {
 }
 
 .category-tile i {
-  font-size: 32px;
-  margin-bottom: 8px;
+  font-size: 24px;
+  margin-bottom: 6px;
   color: #ff5a5f; /* Airbnb-style accent */
 }
 
