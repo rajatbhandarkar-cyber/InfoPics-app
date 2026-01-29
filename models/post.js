@@ -63,13 +63,15 @@ const postSchema = new Schema({
     type: [String],
     enum: [
       "Adventure",
-      "Forts",
       "Beaches",
       "Temples",
       "Mountains",
       "Culture",
       "Food",
-      "Hidden Gems"
+      "Hidden Gems",
+      "Wildlife",
+      "Historical Sites",
+      "Lakes & Rivers"
     ],
     default: []
   },
