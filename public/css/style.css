@@ -780,7 +780,7 @@ body.modal-open {
   flex-wrap: wrap;
   gap: 20px;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 15px;
 }
 
 .category-tile {
