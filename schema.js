@@ -10,13 +10,15 @@ module.exports.postSchema = Joi.object({
     categories: Joi.array().items(
       Joi.string().valid(
         "Adventure",
-        "Forts",
         "Beaches",
         "Temples",
         "Mountains",
         "Culture",
         "Food",
-        "Hidden Gems"
+        "Hidden Gems",
+        "Wildlife",
+        "Historical Sites",
+        "Lakes & Rivers"
       )
     ).default([])
   }).required()
