@@ -71,10 +71,11 @@ module.exports.searchPosts = async (req, res) => {
     ];
   }
 
-  if (category) {
-    filter.categories = category;
+  if (category) { 
+    filter.categories = { $in: [category] }; 
   }
 
+  
   const posts = await Post.find(filter).sort({ createdAt: -1 }).lean();
   res.render("posts/index.ejs", { allPosts: posts, currUser: req.user });
 };
