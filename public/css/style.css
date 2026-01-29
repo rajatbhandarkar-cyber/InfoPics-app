@@ -796,7 +796,7 @@ body.modal-open {
 .category-tile i {
   font-size: 24px;
   margin-bottom: 6px;
-  color: #ff5a5f; /* Airbnb-style accent */
+  color: #333333 /* Airbnb-style accent */
 }
 
 .category-tile span {
@@ -806,7 +806,7 @@ body.modal-open {
 
 .category-tile:hover {
   transform: scale(1.05);
-  color: #ff5a5f;
+  color:#333333;
 }
 
 
