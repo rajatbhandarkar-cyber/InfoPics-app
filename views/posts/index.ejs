@@ -5,6 +5,18 @@
 const list = (typeof posts !== 'undefined') ? posts : (typeof allPosts !== 'undefined' ? allPosts : []);
 %>
 
+<!-- 🔹 Category Filter Bar -->
+<div class="filter-bar d-flex flex-wrap gap-3 mb-4 justify-content-center">
+  <a href="/posts/search?category=Adventure" class="btn search-btn">🏕️ Adventure</a>
+  <a href="/posts/search?category=Forts" class="btn btn-outline-primary">🏰 Forts</a>
+  <a href="/posts/search?category=Beaches" class="btn btn-outline-primary">🏖️ Beaches</a>
+  <a href="/posts/search?category=Temples" class="btn btn-outline-primary">🛕 Temples</a>
+  <a href="/posts/search?category=Mountains" class="btn btn-outline-primary">⛰️ Mountains</a>
+  <a href="/posts/search?category=Culture" class="btn btn-outline-primary">🎭 Culture</a>
+  <a href="/posts/search?category=Food" class="btn btn-outline-primary">🍲 Food</a>
+  <a href="/posts/search?category=Hidden Gems" class="btn btn-outline-primary">✨ Hidden Gems</a>
+</div>
+
 <div class="grid">
   <% if (!list || list.length === 0) { %>
     <div class="no-posts text-center w-100 my-5">
@@ -13,7 +25,7 @@ const list = (typeof posts !== 'undefined') ? posts : (typeof allPosts !== 'unde
         <% if (typeof posts !== 'undefined') { %>
           You haven't shared any experiences yet. <a href="/posts/new">Share one now</a>.
         <% } else { %>
-          Try searching with a different keyword.
+          Try searching with a different keyword or category.
         <% } %>
       </p>
     </div>
@@ -36,6 +48,13 @@ const list = (typeof posts !== 'undefined') ? posts : (typeof allPosts !== 'unde
                 <%= post.description %>
               <% } %>
             </p>
+
+            <!-- Show categories -->
+            <% if (post.categories && post.categories.length > 0) { %>
+              <p class="mt-2">
+                <small class="text-muted">Categories: <%= post.categories.join(", ") %></small>
+              </p>
+            <% } %>
           </div>
 
           <!-- Share container -->
@@ -109,5 +128,13 @@ const list = (typeof posts !== 'undefined') ? posts : (typeof allPosts !== 'unde
 <style>
   .no-posts {
     padding: 3rem 1rem;
+  }
+  .filter-bar a {
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .filter-bar a.active {
+    background-color: #0d6efd;
+    color: #fff;
   }
 </style>

@@ -2,52 +2,99 @@
 <div class="row mt-3">
    <div class="col-8 offset-2">
      <h3>Edit your post</h3>
-    <form method="POST" action = "/posts/<%= post._id %>?_method=PUT" novalidate class="needs-validation" enctype="multipart/form-data">
-        <div class="mb-3">
-            <label for="image" class="form-label">Upload New Image</label>
-            <input 
-            name="post[image]" 
-            type="file"
-            class="form-control"
-            />
-        </div>
-          <div class="mb-3">
-            <i>Original Post Image</i> <br/>
-           <img src="<%= originalImageUrl %>"/>
-        </div>
-        <div class="mb-3">
-            <label for="location" class="form-label">Location</label>
-            <input 
-            name="post[location]" 
-            value="<%= post.location %>"
-            type="text"
-            class="form-control"
-            required
-            />
-            <div class="invalid-feedback">Please enter the location name!</div>
-        </div>
-        <div class="mb-3">
-            <label for="country" class="form-label">Country</label>
-            <input 
-            name="post[country]" 
-            value="<%= post.country %>"
-            type="text"
-            class="form-control"
-            required
-            />
-            <div class="invalid-feedback">Please enter the country name!</div>
-        </div>
-        <div class="mb-3">
-            <label for="description" class="form-label">Experiance / Story</label>
-            <textarea 
-            name="post[description]" 
-            class="form-control large-textarea"
-            required
-            ><%= post.description %></textarea>
-            <div class="invalid-feedback">Please share your Experiance / Story!</div>
-        </div>
+     <form method="POST" action="/posts/<%= post._id %>?_method=PUT" novalidate class="needs-validation" enctype="multipart/form-data">
+       
+       <!-- Image Upload -->
+       <div class="mb-3">
+         <label for="image" class="form-label">Upload New Image</label>
+         <input 
+           name="post[image]" 
+           type="file"
+           class="form-control"
+         />
+       </div>
+
+       <!-- Original Image Preview -->
+       <div class="mb-3">
+         <i>Original Post Image</i> <br/>
+         <img src="<%= originalImageUrl %>" alt="Original Post Image"/>
+       </div>
+
+       <!-- Location -->
+       <div class="mb-3">
+         <label for="location" class="form-label">Location</label>
+         <input 
+           name="post[location]" 
+           value="<%= post.location %>"
+           type="text"
+           class="form-control"
+           required
+         />
+         <div class="invalid-feedback">Please enter the location name!</div>
+       </div>
+
+       <!-- Country -->
+       <div class="mb-3">
+         <label for="country" class="form-label">Country</label>
+         <input 
+           name="post[country]" 
+           value="<%= post.country %>"
+           type="text"
+           class="form-control"
+           required
+         />
+         <div class="invalid-feedback">Please enter the country name!</div>
+       </div>
+
+       <!-- Description -->
+       <div class="mb-3">
+         <label for="description" class="form-label">Experience / Story</label>
+         <textarea 
+           name="post[description]" 
+           class="form-control large-textarea"
+           required
+         ><%= post.description %></textarea>
+         <div class="invalid-feedback">Please share your Experience / Story!</div>
+       </div>
+
+       <!-- Categories -->
+       <div class="mb-3">
+         <label class="form-label">Category</label>
+         <div class="d-flex flex-wrap gap-3">
+           <% const categories = ["Adventure","Forts","Beaches","Temples","Mountains","Culture","Food","Hidden Gems"]; %>
+           <% categories.forEach(cat => { %>
+             <div>
+               <input 
+                 type="checkbox" 
+                 name="post[categories]" 
+                 value="<%= cat %>" 
+                 id="cat-<%= cat.toLowerCase().replace(/\s+/g,'-') %>"
+                 <%= post.categories && post.categories.includes(cat) ? "checked" : "" %>
+               >
+               <label for="cat-<%= cat.toLowerCase().replace(/\s+/g,'-') %>"><%= cat %></label>
+             </div>
+           <% }) %>
+         </div>
+         <small class="text-muted">Select one or more categories that best describe your post.</small>
+       </div>
+
+       <!-- Privacy toggle -->
+       <div class="mb-3">
+         <div class="privacy-container">
+           <label class="form-label mb-0">Privacy</label>
+           <label class="privacy-toggle">
+             <input type="checkbox" name="post[isPrivate]" value="true" <%= post.isPrivate ? "checked" : "" %> />
+             <span class="privacy-slider"></span>
+           </label>
+         </div>
+         <small class="text-muted d-block mt-1">
+           By default, your post is public. Toggle to make it private.
+         </small>
+       </div>
+
+       <!-- Submit -->
        <button class="btn btn-dark">Edit</button>
        <br/><br/>
-    </form>
+     </form>
    </div>
 </div>

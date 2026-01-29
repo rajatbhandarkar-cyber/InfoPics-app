@@ -731,4 +731,48 @@ body.modal-open {
   gap: 10px;             /* space between label and toggle */
 }
 
+/* 🔹 Global Filter Bar */
+.global-filter-bar {
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+  padding: 0.75rem 1rem;
+  position: sticky; /* stays visible when scrolling */
+  top: 5rem; /* adjust based on navbar height */
+  z-index: 1000;
+}
+
+.global-filter-bar .btn {
+  border-radius: 25px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.4rem 1rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.global-filter-bar .btn-outline-primary {
+  color: #0d6efd;
+  border-color: #0d6efd;
+  background-color: #fff;
+}
+
+.global-filter-bar .btn-outline-primary:hover,
+.global-filter-bar .btn-outline-primary.active {
+  background-color: #0d6efd;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* 🔹 Responsive scroll for mobile */
+@media (max-width: 768px) {
+  .global-filter-bar .container {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+  .global-filter-bar .btn {
+    flex: 0 0 auto;
+    margin-right: 0.5rem;
+  }
+}
+
+
 

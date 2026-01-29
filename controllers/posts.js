@@ -1,4 +1,3 @@
-const { model } = require("mongoose");
 const Post = require("../models/post");
 
 module.exports.index = async (req, res) => {
@@ -19,9 +18,7 @@ module.exports.showPost = async (req, res) => {
   const post = await Post.findById(id)
     .populate({
       path: "reviews",
-      populate: {
-        path: "author",
-      },
+      populate: { path: "author" },
     })
     .populate("owner")
     .populate("comments.author");
@@ -50,15 +47,35 @@ module.exports.createPost = async (req, res, next) => {
   // ✅ Ensure isPrivate is saved as Boolean
   newPost.isPrivate = req.body.post.isPrivate === "true";
 
+  // ✅ Handle categories (checkboxes return array or single string)
+  if (req.body.post.categories) {
+    newPost.categories = Array.isArray(req.body.post.categories)
+      ? req.body.post.categories
+      : [req.body.post.categories];
+  }
+
   await newPost.save();
   req.flash("success", "New Post Created!");
   res.redirect("/posts");
 };
 
 module.exports.searchPosts = async (req, res) => {
-  const { q } = req.query;
-  // ✅ Search only public posts
-  const posts = await Post.find({ location: new RegExp(q, "i"), isPrivate: false }).lean();
+  const { q, category } = req.query;
+  let filter = { isPrivate: false };
+
+  if (q) {
+    filter.$or = [
+      { location: new RegExp(q, "i") },
+      { country: new RegExp(q, "i") },
+      { description: new RegExp(q, "i") }
+    ];
+  }
+
+  if (category) {
+    filter.categories = category;
+  }
+
+  const posts = await Post.find(filter).sort({ createdAt: -1 }).lean();
   res.render("posts/index.ejs", { allPosts: posts, currUser: req.user });
 };
 
@@ -82,6 +99,15 @@ module.exports.updatePost = async (req, res) => {
   // ✅ Ensure isPrivate is updated correctly
   updates.isPrivate = req.body.post.isPrivate === "true";
 
+  // ✅ Handle categories update
+  if (req.body.post.categories) {
+    updates.categories = Array.isArray(req.body.post.categories)
+      ? req.body.post.categories
+      : [req.body.post.categories];
+  } else {
+    updates.categories = [];
+  }
+
   const post = await Post.findByIdAndUpdate(id, updates, { new: true });
 
   if (typeof req.file !== "undefined") {
@@ -102,11 +128,11 @@ module.exports.destroyPost = async (req, res) => {
   res.redirect("/posts");
 };
 
+// Comments
 module.exports.getComments = async (req, res) => {
   const { id } = req.params;
   const post = await Post.findById(id).populate("comments.author");
   if (!post) return res.status(404).json({ error: "Post not found" });
-
   res.json({ comments: post.comments });
 };
 
@@ -115,11 +141,7 @@ module.exports.createComment = async (req, res) => {
   const post = await Post.findById(id);
   if (!post) return res.status(404).json({ error: "Post not found" });
 
-  post.comments.push({
-    text: req.body.text,
-    author: req.user._id,
-  });
-
+  post.comments.push({ text: req.body.text, author: req.user._id });
   await post.save();
   await post.populate("comments.author");
 
@@ -153,7 +175,6 @@ module.exports.likePost = async (req, res) => {
   const post = await Post.findById(id);
   const userId = req.user._id;
 
-  // Prevent duplicate likes
   if (post.likedBy.includes(userId)) {
     req.flash("error", "You've already liked this post.");
     return res.redirect(`/posts/${id}`);
@@ -167,10 +188,7 @@ module.exports.likePost = async (req, res) => {
   res.redirect(`/posts/${id}`);
 };
 
-/**
- * New: show only posts created by the logged-in user
- * Split into public and private
- */
+// My Posts
 module.exports.showMyPosts = async (req, res, next) => {
   try {
     const username = req.user && req.user.username;

@@ -58,6 +58,22 @@ const postSchema = new Schema({
     }
   },
 
+  // Categories / Filters
+  categories: {
+    type: [String],
+    enum: [
+      "Adventure",
+      "Forts",
+      "Beaches",
+      "Temples",
+      "Mountains",
+      "Culture",
+      "Food",
+      "Hidden Gems"
+    ],
+    default: []
+  },
+
   // Reviews (referenced)
   reviews: [
     {
@@ -98,6 +114,7 @@ const postSchema = new Schema({
     type: Boolean, 
     default: false // by default posts are public
   },
+
   comments: [commentSchema]
 }, { timestamps: true });
 
