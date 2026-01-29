@@ -774,5 +774,41 @@ body.modal-open {
   }
 }
 
+/* filters */
+.category-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.category-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  width: 100px;
+  transition: transform 0.2s ease;
+}
+
+.category-tile i {
+  font-size: 32px;
+  margin-bottom: 8px;
+  color: #ff5a5f; /* Airbnb-style accent */
+}
+
+.category-tile span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.category-tile:hover {
+  transform: scale(1.05);
+  color: #ff5a5f;
+}
+
+
 
 
