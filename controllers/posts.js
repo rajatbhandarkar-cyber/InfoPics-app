@@ -33,26 +33,35 @@ module.exports.showPost = async (req, res) => {
 };
 
 module.exports.createPost = async (req, res, next) => {
-  const url = req.file.path;
-  const filename = req.file.filename;
-  const newPost = new Post(req.body.post);
+  try {
+    const newPost = new Post(req.body.post);
 
-  // canonical owner reference
-  newPost.owner = req.user._id;
+    // canonical owner reference
+    newPost.owner = req.user._id;
 
-  // denormalized username to enable username filtering
-  if (req.user.username) {
-    newPost.ownerUsername = req.user.username;
+    // denormalized username to enable username filtering
+    if (req.user.username) {
+      newPost.ownerUsername = req.user.username;
+    }
+
+    // ✅ Ensure isPrivate is saved as Boolean
+    newPost.isPrivate = req.body.post.isPrivate === "true";
+
+    await newPost.save();
+
+    // ✅ Redirect immediately after save
+    req.flash("success", "New Post Created!");
+    res.redirect("/posts");
+
+    // 🔧 Handle image upload/update asynchronously (non-blocking)
+    if (req.file) {
+      const url = req.file.path;
+      const filename = req.file.filename;
+      Post.findByIdAndUpdate(newPost._id, { image: { url, filename } }).exec();
+    }
+  } catch (err) {
+    next(err);
   }
-
-  newPost.image = { url, filename };
-
-  // ✅ Ensure isPrivate is saved as Boolean
-  newPost.isPrivate = req.body.post.isPrivate === "true";
-
-  await newPost.save();
-  req.flash("success", "New Post Created!");
-  res.redirect("/posts");
 };
 
 module.exports.searchPosts = async (req, res) => {
