@@ -2,17 +2,40 @@ const { model } = require("mongoose");
 const Post = require("../models/post");
 
 module.exports.index = async (req, res) => {
-  console.time("indexQuery");
-  const allPosts = await Post.find({ isPrivate: { $ne: true } })
-    .sort({ _id: -1 })
-    .populate("owner")
-    .lean();
-  console.timeEnd("indexQuery");
+  try {
+    // ✅ Get page number from query string, default to 1
+    const page = parseInt(req.query.page) || 1;
+    const limit = 20; // show 20 posts per page
+    const skip = (page - 1) * limit;
 
-  console.time("renderIndex");
-  res.render("posts/index.ejs", { allPosts, currUser: req.user });
-  console.timeEnd("renderIndex");
+    console.time("indexQuery");
+    const allPosts = await Post.find({ isPrivate: { $ne: true } })
+      .sort({ createdAt: -1 })   // use createdAt instead of _id for clarity
+      .skip(skip)
+      .limit(limit)
+      .populate("owner", "username profilePic") // only fetch needed fields
+      .lean();
+    console.timeEnd("indexQuery");
+
+    // ✅ Count total posts for pagination
+    const totalPosts = await Post.countDocuments({ isPrivate: { $ne: true } });
+    const totalPages = Math.ceil(totalPosts / limit);
+
+    console.time("renderIndex");
+    res.render("posts/index.ejs", {
+      allPosts,
+      currUser: req.user,
+      currentPage: page,
+      totalPages
+    });
+    console.timeEnd("renderIndex");
+  } catch (err) {
+    console.error("Error in index controller:", err);
+    req.flash("error", "Unable to load posts");
+    res.redirect("/");
+  }
 };
+
 
 module.exports.renderNewForm = (req, res) => {
   res.render("posts/new.ejs");

@@ -23,6 +23,9 @@ const commentSchema = new Schema({
 
 // Post schema
 const postSchema = new Schema({
+  ownerUsername: { type: String, index: true }, 
+  isPrivate: { type: Boolean, index: true }, 
+  createdAt: { type: Date, default: Date.now, index: true },
   image: {
     url: String,
     filename: String
