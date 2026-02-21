@@ -170,15 +170,3 @@ module.exports.destroyPost = async (req, res) => {
   req.flash("success", "Post Deleted!");
   res.redirect("/posts");
 };
-
-module.exports = { 
-  index, 
-  renderNewForm, 
-  showPost, 
-  createPost, 
-  searchPosts, 
-  renderEditForm, 
-  updatePost, 
-  destroyPost, 
-  showMyPosts // ✅ don’t forget this 
-};
