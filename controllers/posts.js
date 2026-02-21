@@ -61,6 +61,34 @@ module.exports.showPost = async (req, res) => {
   res.render("posts/show.ejs", { post, currUser: req.user });
 };
 
+// new  one 
+
+module.exports.showMyPosts = async (req, res) => {
+  try {
+    const publicPosts = await Post.find({ owner: req.user._id, isPrivate: false })
+      .sort({ createdAt: -1 })
+      .populate("owner", "username profilePic")
+      .lean();
+
+    const privatePosts = await Post.find({ owner: req.user._id, isPrivate: true })
+      .sort({ createdAt: -1 })
+      .populate("owner", "username profilePic")
+      .lean();
+
+    res.render("posts/my-posts.ejs", {
+      publicPosts,
+      privatePosts,
+      currUser: req.user
+    });
+  } catch (err) {
+    console.error("Error in showMyPosts:", err);
+    req.flash("error", "Unable to load your posts");
+    res.redirect("/posts");
+  }
+};
+
+
+
 module.exports.createPost = async (req, res, next) => {
   try {
     console.time("createPost");
@@ -141,4 +169,16 @@ module.exports.destroyPost = async (req, res) => {
   console.log(deletedPost);
   req.flash("success", "Post Deleted!");
   res.redirect("/posts");
+};
+
+module.exports = { 
+  index, 
+  renderNewForm, 
+  showPost, 
+  createPost, 
+  searchPosts, 
+  renderEditForm, 
+  updatePost, 
+  destroyPost, 
+  showMyPosts // ✅ don’t forget this 
 };
